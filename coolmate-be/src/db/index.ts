@@ -1,23 +1,15 @@
+import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as usersSchema from './schema/users.schema';
-import * as categoriesSchema from './schema/categories.schema';
-import * as productsSchema from './schema/products.schema';
-import * as cartsSchema from './schema/carts.schema';
-import * as ordersSchema from './schema/orders.schema';
-import * as relations from './schema/relations';
+import * as schema from './schema';
 
-const schema = {
-  ...usersSchema,
-  ...categoriesSchema,
-  ...productsSchema,
-  ...cartsSchema,
-  ...ordersSchema,
-  ...relations,
-};
+const connectionString = process.env.DATABASE_URL;
 
-const connectionString = process.env.DATABASE_URL!;
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not defined');
+}
+
 const client = postgres(connectionString);
-
 export const db = drizzle(client, { schema });
+export { schema };
 export type Database = typeof db;
