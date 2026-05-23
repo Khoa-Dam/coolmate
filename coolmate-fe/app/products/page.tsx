@@ -172,10 +172,10 @@ function ProductsContent() {
               <button
                 key={size}
                 onClick={() => handleSizeToggle(size)}
-                className={`h-10 px-4 rounded-full font-label-md text-xs cursor-pointer transition-all border ${
+                className={`h-10 px-4 rounded-full font-label-md transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-on-surface text-white border-on-surface shadow-md font-bold"
-                    : "border-outline-variant/60 bg-surface text-on-surface hover:border-on-surface"
+                    ? "bg-on-surface text-surface shadow-md font-semibold"
+                    : "border border-outline-variant bg-surface text-on-surface hover:border-on-surface transition-colors"
                 }`}
               >
                 {size}
@@ -223,13 +223,13 @@ function ProductsContent() {
           />
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1 bg-surface-container-low border border-outline-variant rounded-lg p-2">
-              <span className="text-label-sm text-on-surface-variant block mb-1 text-[10px] uppercase font-semibold">Từ</span>
-              <span className="font-body-md text-on-surface font-semibold text-sm">0đ</span>
+              <span className="text-label-sm text-on-surface-variant block mb-1">Từ</span>
+              <span className="font-body-md text-on-surface">0đ</span>
             </div>
             <span className="text-on-surface-variant">-</span>
             <div className="flex-1 bg-surface-container-low border border-outline-variant rounded-lg p-2">
-              <span className="text-label-sm text-on-surface-variant block mb-1 text-[10px] uppercase font-semibold">Đến</span>
-              <span className="font-body-md text-on-surface font-semibold text-sm">
+              <span className="text-label-sm text-on-surface-variant block mb-1">Đến</span>
+              <span className="font-body-md text-on-surface">
                 {maxPrice === 1000000 ? "1.000.000đ+" : `${maxPrice.toLocaleString("vi-VN")}đ`}
               </span>
             </div>
@@ -246,13 +246,15 @@ function ProductsContent() {
         <Button
           variant="outline"
           onClick={clearAllFilters}
-          className="border-destructive/60 text-destructive hover:bg-destructive/5 rounded-lg text-xs font-headline font-bold uppercase tracking-wider h-10 w-full mt-4 cursor-pointer"
+          className="border border-destructive text-destructive hover:bg-destructive/5 rounded-lg text-xs font-headline font-bold uppercase tracking-wider h-10 w-full mt-4 cursor-pointer"
         >
           Xóa bộ lọc
         </Button>
       )}
     </div>
   );
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   return (
     <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full">
@@ -265,7 +267,7 @@ function ProductsContent() {
 
       {/* Page Title */}
       <div className="mb-8 md:mb-12">
-        <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface uppercase tracking-tight">
+        <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">
           Đồ nam
         </h1>
       </div>
@@ -290,7 +292,7 @@ function ProductsContent() {
                 <Sheet>
                   <SheetTrigger
                     render={
-                      <Button variant="outline" className="border-outline-variant text-on-surface rounded-full gap-2 cursor-pointer h-9 px-4 text-xs font-semibold" />
+                      <Button variant="outline" className="border border-outline-variant text-on-surface rounded-full gap-2 cursor-pointer h-10 px-4 text-xs font-semibold" />
                     }
                   >
                     <SlidersHorizontal className="size-3.5" /> Bộ lọc
@@ -305,33 +307,33 @@ function ProductsContent() {
               </div>
 
               {/* Quick Filters */}
-              <div className="flex items-center gap-1.5 mr-2">
+              <div className="flex flex-wrap items-center gap-1.5 mr-2">
                 <button
                   onClick={() => setQuickFilter("all")}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+                  className={`px-4 py-2 rounded-full font-label-sm text-xs cursor-pointer transition-colors ${
                     quickFilter === "all"
-                      ? "bg-on-surface text-white border-on-surface"
-                      : "bg-white border-outline-variant text-on-surface hover:border-on-surface"
+                      ? "bg-on-surface text-surface"
+                      : "bg-surface border border-outline-variant text-on-surface hover:border-on-surface"
                   }`}
                 >
                   Tất cả sản phẩm
                 </button>
                 <button
                   onClick={() => setQuickFilter("best")}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+                  className={`px-4 py-2 rounded-full font-label-sm text-xs cursor-pointer transition-colors ${
                     quickFilter === "best"
-                      ? "bg-on-surface text-white border-on-surface"
-                      : "bg-white border-outline-variant text-on-surface hover:border-on-surface"
+                      ? "bg-on-surface text-surface"
+                      : "bg-surface border border-outline-variant text-on-surface hover:border-on-surface"
                   }`}
                 >
                   Bán chạy
                 </button>
                 <button
                   onClick={() => setQuickFilter("new")}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer border ${
+                  className={`px-4 py-2 rounded-full font-label-sm text-xs cursor-pointer transition-colors ${
                     quickFilter === "new"
-                      ? "bg-on-surface text-white border-on-surface"
-                      : "bg-white border-outline-variant text-on-surface hover:border-on-surface"
+                      ? "bg-on-surface text-surface"
+                      : "bg-surface border border-outline-variant text-on-surface hover:border-on-surface"
                   }`}
                 >
                   Sản phẩm mới
@@ -339,16 +341,16 @@ function ProductsContent() {
               </div>
 
               {/* Sort Selector */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 <Select value={sortBy} onValueChange={(val) => setSortBy(val ?? "")}>
-                  <SelectTrigger className="w-36 sm:w-40 border-outline-variant rounded-full bg-white text-xs font-semibold h-9">
+                  <SelectTrigger className="px-4 py-2 bg-surface border border-outline-variant text-on-surface rounded-full font-label-sm hover:border-on-surface transition-colors flex items-center gap-1 h-10 w-40 justify-between cursor-pointer focus:ring-0 focus:ring-offset-0 focus-visible:outline-none">
                     <SelectValue placeholder="Sắp xếp" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-outline-variant text-xs">
-                    <SelectItem value="featured">Nổi bật</SelectItem>
-                    <SelectItem value="price-asc">Giá tăng dần</SelectItem>
-                    <SelectItem value="price-desc">Giá giảm dần</SelectItem>
-                    <SelectItem value="rating">Đánh giá tốt</SelectItem>
+                  <SelectContent className="bg-white border border-outline-variant text-sm rounded-lg shadow-md font-label-sm">
+                    <SelectItem value="featured" className="cursor-pointer">Nổi bật</SelectItem>
+                    <SelectItem value="price-asc" className="cursor-pointer">Giá tăng dần</SelectItem>
+                    <SelectItem value="price-desc" className="cursor-pointer">Giá giảm dần</SelectItem>
+                    <SelectItem value="rating" className="cursor-pointer">Đánh giá tốt</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -359,6 +361,52 @@ function ProductsContent() {
           <main>
             <ProductGrid products={filteredProducts} />
           </main>
+
+          {/* Pagination */}
+          <div className="mt-12 flex justify-center items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:border-on-surface transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+            </button>
+            
+            {[1, 2, 3].map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-10 h-10 flex items-center justify-center rounded font-label-md cursor-pointer transition-colors ${
+                  currentPage === page
+                    ? "bg-on-surface text-surface font-semibold"
+                    : "border border-outline-variant text-on-surface hover:border-on-surface"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <span className="text-on-surface-variant px-2 select-none">...</span>
+
+            <button
+              onClick={() => setCurrentPage(12)}
+              className={`w-10 h-10 flex items-center justify-center rounded font-label-md cursor-pointer transition-colors ${
+                currentPage === 12
+                  ? "bg-on-surface text-surface font-semibold"
+                  : "border border-outline-variant text-on-surface hover:border-on-surface"
+              }`}
+            >
+              12
+            </button>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, 12))}
+              disabled={currentPage === 12}
+              className="w-10 h-10 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:border-on-surface transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

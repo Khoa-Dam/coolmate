@@ -39,15 +39,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
   return (
     <Sheet>
       <SheetTrigger render={trigger} />
-      <SheetContent className="w-full sm:max-w-md bg-white border-l border-outline-variant/30 flex flex-col h-full p-0 shadow-2xl">
-        <SheetHeader className="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-white flex-row shrink-0">
-          <SheetTitle className="font-headline text-headline-sm text-on-surface uppercase tracking-tight">
+      <SheetContent className="w-full sm:max-w-[440px] bg-surface-container-lowest border-l border-outline-variant/30 flex flex-col h-full p-0 shadow-2xl">
+        <SheetHeader className="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-lowest flex-row shrink-0">
+          <SheetTitle className="font-headline-sm text-headline-sm text-on-surface tracking-tight">
             Giỏ hàng của bạn ({cartCount})
           </SheetTitle>
         </SheetHeader>
 
         {/* Drawer Body (Scrollable) */}
-        <div className="flex-grow overflow-y-auto no-scrollbar p-6 flex flex-col gap-6 bg-surface-bright">
+        <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col gap-8 bg-surface-bright">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center text-on-surface-variant font-medium">
               <span className="material-symbols-outlined text-4xl mb-3 text-on-surface-variant/40">shopping_bag</span>
@@ -66,7 +66,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
               <div className="flex flex-col gap-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="w-20 h-24 shrink-0 bg-surface-container-low rounded-md overflow-hidden relative border border-outline-variant/20 shadow-sm">
+                    <div className="w-24 h-32 shrink-0 bg-surface-container-low rounded-md overflow-hidden relative border border-outline-variant/20 shadow-sm">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.product.imageUrl}
@@ -74,13 +74,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="flex flex-col flex-1 justify-between py-0.5">
+                    <div className="flex flex-col flex-1 justify-between py-1">
                       <div className="flex justify-between items-start gap-2">
                         <div>
-                          <h4 className="font-headline text-xs font-bold text-on-surface line-clamp-2">
+                          <h4 className="font-label-md text-label-md text-on-surface line-clamp-2">
                             {item.product.name}
                           </h4>
-                          <p className="text-[10px] font-sans font-medium text-on-surface-variant mt-1">
+                          <p className="font-label-sm text-label-sm text-on-surface-variant mt-1">
                             {item.selectedColor} / {item.selectedSize}
                           </p>
                         </div>
@@ -98,19 +98,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                         <div className="flex items-center border border-outline-variant/50 rounded-md bg-white overflow-hidden">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                            aria-label="Giảm số lượng"
+                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
                           >
                             <Minus className="size-3" />
                           </button>
-                          <span className="w-8 text-center text-xs font-sans font-bold">{item.quantity}</span>
+                          <span className="w-8 text-center font-label-sm text-label-sm">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-7 h-7 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                            aria-label="Tăng số lượng"
+                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
                           >
                             <Plus className="size-3" />
                           </button>
                         </div>
-                        <span className="text-xs font-sans font-bold text-on-surface">
+                        <span className="font-label-md text-label-md text-on-surface">
                           {(item.product.price * item.quantity).toLocaleString("vi-VN")}đ
                         </span>
                       </div>
@@ -159,7 +161,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
 
         {/* Drawer Footer */}
         {items.length > 0 && (
-          <div className="p-6 bg-white border-t border-outline-variant/30 flex flex-col gap-5 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] shrink-0">
+          <div className="p-6 bg-surface-container-lowest border-t border-outline-variant/30 flex flex-col gap-5 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] shrink-0">
             {/* Promo Code Input */}
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -168,12 +170,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="Mã giảm giá (Thử: NOVA15)"
-                  className="pl-9 h-10 text-xs border-outline-variant rounded-lg bg-surface-bright"
+                  className="pl-10 h-12 text-sm border-outline-variant/50 rounded-lg bg-surface-bright"
                 />
               </div>
               <Button
                 onClick={handleApplyPromo}
-                className="px-4 h-10 border border-on-surface text-on-surface hover:bg-surface-container bg-transparent rounded-lg text-xs font-headline font-bold uppercase tracking-wider cursor-pointer"
+                className="px-5 h-12 border border-on-surface text-on-surface hover:bg-surface-container bg-transparent rounded-lg text-xs font-headline font-bold uppercase tracking-wider cursor-pointer"
               >
                 Áp dụng
               </Button>
@@ -210,7 +212,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                 <Link href="/checkout" className="block w-full" />
               }
             >
-              <Button className="w-full h-12 bg-primary text-white hover:bg-primary-container rounded-lg font-headline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(0,85,255,0.2)]">
+              <Button className="w-full h-14 bg-primary text-on-primary hover:bg-primary-container rounded-lg font-headline-sm text-[18px] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(0,85,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,85,255,0.3)] hover:-translate-y-0.5 transition-all duration-200">
                 Thanh toán
                 <ArrowRight className="size-4" />
               </Button>
