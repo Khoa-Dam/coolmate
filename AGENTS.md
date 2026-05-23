@@ -24,7 +24,8 @@ Load and follow the files in `.agents/` before meaningful work:
 5. `.agents/workflow/verification.md` — required checks before reporting done.
 6. `.agents/skills/frontend-ui.md` — reusable frontend UI skill.
 7. `.agents/skills/brainstorming.md` — brainstorming and product/design ideation skill.
-8. `.agents/learning/research.md` — how to research docs and reference sites safely.
+8. `.agents/skills/shadcn-ui.md` — shadcn/ui component, registry, preset, and styling rules.
+9. `.agents/learning/research.md` — how to research docs and reference sites safely.
 
 ## Default behavior
 

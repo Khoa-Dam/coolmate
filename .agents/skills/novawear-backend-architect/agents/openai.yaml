@@ -1,0 +1,5 @@
+interface:
+  display_name: "NovaWear Backend Architect"
+  short_description: "Design and review NestJS, Supabase PostgreSQL, Drizzle ORM, auth, product, cart, and order backend work."
+  icon: "server"
+  brand_color: "#0F172A"

@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(gh repo view google-labs-code/stitch-skills --json name,description,defaultBranchRef,url)",
-      "WebFetch(domain:github.com)",
-      "Bash(python *)"
-    ]
-  }
-}

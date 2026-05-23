@@ -13,6 +13,12 @@ The goal is to recreate the user experience and ecommerce patterns of Coolmate, 
 5. Checkout shell: customer info, shipping/payment placeholders, order summary.
 6. Account/order pages only after core shopping flows work.
 
+## Route-level organization
+
+- Each ecommerce route can own its local sections and widgets. For example, login page components should stay in the login route area when they are not reused elsewhere.
+- Global components are reserved for repeated UI such as site header, footer, product card, price display, cart summary, section heading, and shared layout pieces.
+- Keep page composition readable: route page files should assemble sections; section files should own their local markup and state.
+
 ## Ecommerce behavior
 
 - Product cards should support image, name, color/variant hint, price, compare-at price, discount badge, and availability.

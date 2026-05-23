@@ -14,6 +14,14 @@
 - Avoid broad utility layers until at least three concrete call sites prove the need.
 - Do not add comments unless the reason is non-obvious.
 
+## Component placement
+
+- Page-specific components must live close to the route/page that owns them. Example: login-only UI belongs under the login route folder, not global `components/`.
+- Shared app components used across multiple pages can live in global `components/`.
+- Low-level reusable shadcn/ui primitives belong in the configured shadcn UI directory, usually `components/ui/`.
+- If a component starts page-specific and later has at least two real reuse sites, then move it to global `components/`.
+- Do not create broad global component folders for one-off page sections.
+
 ## UI quality
 
 - Build responsive layouts for mobile, tablet, and desktop.

@@ -1,3 +1,6 @@
+packages:
+  - "coolmate-fe"
+  - "coolmate-be"
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
