@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
+import { AppToaster } from "@/app/components/AppToaster";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -17,7 +19,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "NovaWear - Mặc thoải mái. Sống năng động.",
-  description: "Thời trang cơ bản và thể thao cho cuộc sống năng động mỗi ngày. Thiết kế tinh giản, chất liệu cao cấp từ Việt Nam.",
+  description:
+    "Thời trang cơ bản và thể thao cho cuộc sống năng động mỗi ngày. Thiết kế tinh giản, chất liệu cao cấp từ Việt Nam.",
 };
 
 export default function RootLayout({
@@ -36,12 +39,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-surface text-on-surface font-sans">
-        <CartProvider>
-          {children}
-        </CartProvider>
+      <body className="min-h-lvh flex flex-col bg-surface text-on-surface font-sans">
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
+        <AppToaster />
       </body>
     </html>
   );
 }
-

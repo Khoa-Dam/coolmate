@@ -1,24 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useCart } from "../context/CartContext";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { useCart } from "@/context/CartContext";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Plus, Minus, Tag, ArrowRight } from "lucide-react";
-import { mockProducts } from "../data/products";
+import { productApi } from "@/services/productApi";
+import { Product } from "@/types/product";
 
 interface CartDrawerProps {
   trigger: React.ReactElement;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
-  const { items, updateQuantity, removeFromCart, cartTotal, cartCount, addToCart } = useCart();
+  const {
+    items,
+    updateQuantity,
+    removeFromCart,
+    cartTotal,
+    cartCount,
+    addToCart,
+    isLoading,
+  } = useCart();
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [promoError, setPromoError] = useState("");
   const [promoSuccess, setPromoSuccess] = useState("");
+  const [upsellItems, setUpsellItems] = useState<Product[]>([]);
 
   const handleApplyPromo = () => {
     setPromoError("");
@@ -33,8 +50,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
     }
   };
 
-  // Upsell items (Boxer brief modal & vớ cổ trung)
-  const upsellItems = mockProducts.filter((p) => p.id === "prod-5" || p.id === "prod-6");
+  useEffect(() => {
+    productApi
+      .getProducts({ limit: 2 })
+      .then((response) => setUpsellItems(response.items))
+      .catch(() => setUpsellItems([]));
+  }, []);
 
   return (
     <Sheet>
@@ -50,7 +71,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
         <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col gap-8 bg-surface-bright">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center text-on-surface-variant font-medium">
-              <span className="material-symbols-outlined text-4xl mb-3 text-on-surface-variant/40">shopping_bag</span>
+              <span className="material-symbols-outlined text-4xl mb-3 text-on-surface-variant/40">
+                shopping_bag
+              </span>
               <p className="text-sm">Giỏ hàng của bạn đang trống.</p>
               <SheetClose
                 render={
@@ -85,8 +108,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                           </p>
                         </div>
                         <button
+                          disabled={isLoading}
                           onClick={() => removeFromCart(item.id)}
-                          className="text-on-surface-variant hover:text-destructive cursor-pointer transition-colors"
+                          className="text-on-surface-variant hover:text-destructive cursor-pointer transition-colors disabled:pointer-events-none disabled:opacity-40"
                           title="Xóa"
                         >
                           <Trash2 className="size-4" />
@@ -97,23 +121,34 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                         {/* Quantity Selector */}
                         <div className="flex items-center border border-outline-variant/50 rounded-md bg-white overflow-hidden">
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            disabled={isLoading}
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity - 1)
+                            }
                             aria-label="Giảm số lượng"
-                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-40"
                           >
                             <Minus className="size-3" />
                           </button>
-                          <span className="w-8 text-center font-label-sm text-label-sm">{item.quantity}</span>
+                          <span className="w-8 text-center font-label-sm text-label-sm">
+                            {item.quantity}
+                          </span>
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            disabled={isLoading}
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity + 1)
+                            }
                             aria-label="Tăng số lượng"
-                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                            className="size-8 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-40"
                           >
                             <Plus className="size-3" />
                           </button>
                         </div>
                         <span className="font-label-md text-label-md text-on-surface">
-                          {(item.product.price * item.quantity).toLocaleString("vi-VN")}đ
+                          {(item.product.price * item.quantity).toLocaleString(
+                            "vi-VN",
+                          )}
+                          đ
                         </span>
                       </div>
                     </div>
@@ -126,7 +161,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
 
               {/* Suggestions/Upsell section */}
               <div className="flex flex-col gap-4">
-                <h4 className="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">Sản phẩm gợi ý</h4>
+                <h4 className="font-headline text-xs font-bold uppercase tracking-wider text-on-surface">
+                  Sản phẩm gợi ý
+                </h4>
                 <div className="grid grid-cols-2 gap-4">
                   {upsellItems.map((prod) => (
                     <div
@@ -142,12 +179,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                         />
                       </div>
                       <div className="flex flex-col gap-0.5 text-[10px]">
-                        <span className="font-bold text-on-surface truncate">{prod.name}</span>
-                        <span className="font-medium text-on-surface-variant">{prod.price.toLocaleString("vi-VN")}đ</span>
+                        <span className="font-bold text-on-surface truncate">
+                          {prod.name}
+                        </span>
+                        <span className="font-medium text-on-surface-variant">
+                          {prod.price.toLocaleString("vi-VN")}đ
+                        </span>
                       </div>
                       <Button
-                        onClick={() => addToCart(prod, prod.sizes[0] || "Free Size", prod.colors[0] || "Đen", 1)}
-                        className="w-full py-1 h-7 border border-on-surface text-on-surface hover:bg-on-surface hover:text-white bg-transparent rounded text-[10px] font-headline font-bold uppercase tracking-wide flex justify-center items-center gap-1 cursor-pointer transition-colors"
+                        disabled={isLoading}
+                        onClick={() => {
+                          void addToCart(
+                            prod,
+                            prod.sizes[0] || "Free Size",
+                            prod.colors[0] || "Đen",
+                            1,
+                          );
+                        }}
+                        className="w-full py-1 h-7 border border-on-surface text-on-surface hover:bg-on-surface hover:text-white bg-transparent rounded text-[10px] font-headline font-bold uppercase tracking-wide flex justify-center items-center gap-1 cursor-pointer transition-colors disabled:pointer-events-none disabled:opacity-50"
                       >
                         <Plus className="size-2.5" /> Thêm
                       </Button>
@@ -180,14 +229,24 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                 Áp dụng
               </Button>
             </div>
-            {promoError && <span className="text-[10px] -mt-3 text-destructive font-medium">{promoError}</span>}
-            {promoSuccess && <span className="text-[10px] -mt-3 text-emerald-600 font-medium">{promoSuccess}</span>}
+            {promoError && (
+              <span className="text-[10px] -mt-3 text-destructive font-medium">
+                {promoError}
+              </span>
+            )}
+            {promoSuccess && (
+              <span className="text-[10px] -mt-3 text-emerald-600 font-medium">
+                {promoSuccess}
+              </span>
+            )}
 
             {/* Price Calculations */}
             <div className="flex flex-col gap-2.5 text-xs text-on-surface-variant font-medium">
               <div className="flex justify-between items-center">
                 <span>Tạm tính</span>
-                <span className="font-semibold text-on-surface">{cartTotal.toLocaleString("vi-VN")}đ</span>
+                <span className="font-semibold text-on-surface">
+                  {cartTotal.toLocaleString("vi-VN")}đ
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Phí vận chuyển</span>
@@ -201,22 +260,22 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
               )}
               <div className="h-px bg-outline-variant/30 w-full my-0.5" />
               <div className="flex justify-between items-center text-sm font-bold text-on-surface">
-                <span className="font-headline uppercase tracking-wider">Tổng cộng</span>
-                <span className="text-primary font-headline">{(cartTotal - discount).toLocaleString("vi-VN")}đ</span>
+                <span className="font-headline uppercase tracking-wider">
+                  Tổng cộng
+                </span>
+                <span className="text-primary font-headline">
+                  {(cartTotal - discount).toLocaleString("vi-VN")}đ
+                </span>
               </div>
             </div>
 
             {/* Checkout Link */}
-            <SheetClose
-              render={
-                <Link href="/checkout" className="block w-full" />
-              }
-            >
+            <Link href="/checkout" className="block w-full">
               <Button className="w-full h-14 bg-primary text-on-primary hover:bg-primary-container rounded-lg font-headline-sm text-[18px] flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_20px_rgba(0,85,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,85,255,0.3)] hover:-translate-y-0.5 transition-all duration-200">
                 Thanh toán
                 <ArrowRight className="size-4" />
               </Button>
-            </SheetClose>
+            </Link>
           </div>
         )}
       </SheetContent>

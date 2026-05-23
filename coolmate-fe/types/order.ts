@@ -1,7 +1,10 @@
 import { CartItem } from "./cart";
 
+export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+
 export interface Order {
   id: string;
+  code?: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -11,6 +14,6 @@ export interface Order {
   totalAmount: number;
   paymentMethod: string;
   paymentStatus: "pending" | "paid" | "failed";
-  orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  orderStatus: OrderStatus;
   createdAt: string;
 }

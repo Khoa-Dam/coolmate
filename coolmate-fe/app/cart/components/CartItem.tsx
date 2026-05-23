@@ -1,10 +1,9 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
-import { CartItem as CartItemType } from "../types/cart";
-import { useCart } from "../context/CartContext";
-import { Button } from "@/components/ui/button";
+import { CartItem as CartItemType } from "@/types/cart";
+import { useCart } from "@/context/CartContext";
 
 interface CartItemProps {
   item: CartItemType;
@@ -47,7 +46,9 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
               className="text-on-surface-variant hover:text-destructive p-1 transition-colors cursor-pointer"
               title="Xóa sản phẩm"
             >
-              <span className="material-symbols-outlined text-[18px]">delete</span>
+              <span className="material-symbols-outlined text-[18px]">
+                delete
+              </span>
             </button>
           </div>
 
@@ -67,7 +68,9 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
               onClick={() => handleQtyChange(item.quantity - 1)}
               disabled={item.quantity <= 1}
             >
-              <span className="material-symbols-outlined text-[14px]">remove</span>
+              <span className="material-symbols-outlined text-[14px]">
+                remove
+              </span>
             </button>
             <span className="w-8 text-center text-xs font-semibold text-on-surface">
               {item.quantity}
@@ -86,9 +89,12 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
             <span className="text-sm font-bold text-on-surface">
               {(item.product.price * item.quantity).toLocaleString("vi-VN")}đ
             </span>
-            {item.product.originalPrice > item.product.price && (
+            {(item.product.originalPrice ?? item.product.price) > item.product.price && (
               <span className="text-[11px] text-on-surface-variant/75 line-through">
-                {(item.product.originalPrice * item.quantity).toLocaleString("vi-VN")}đ
+                {((item.product.originalPrice ?? item.product.price) * item.quantity).toLocaleString(
+                  "vi-VN",
+                )}
+                đ
               </span>
             )}
           </div>

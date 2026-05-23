@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Category } from "../types/product";
+import { Category } from "../../types/product";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface CategoryCardProps {

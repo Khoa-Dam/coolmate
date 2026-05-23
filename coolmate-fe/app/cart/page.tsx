@@ -1,12 +1,13 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-import { CartItem } from "../components/CartItem";
-import { PriceSummary } from "../components/PriceSummary";
-import { useCart } from "../context/CartContext";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import { CartItem } from "./components/CartItem";
+import { PriceSummary } from "./components/PriceSummary";
+import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, ArrowLeft, ArrowRight } from "lucide-react";
 
@@ -20,6 +21,7 @@ export default function CartPage() {
       <Header />
 
       <main className="flex-grow max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full">
+        <ProtectedRoute>
         <h1 className="font-headline text-xl md:text-2xl font-black text-on-surface mb-8 uppercase tracking-tight">
           Giỏ hàng của bạn
         </h1>
@@ -33,7 +35,8 @@ export default function CartPage() {
               Giỏ hàng trống
             </h2>
             <p className="text-on-surface-variant text-sm mt-1 max-w-sm">
-              Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy lướt qua bộ sưu tập của chúng tôi để chọn sản phẩm phù hợp.
+              Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy lướt qua bộ sưu tập
+              của chúng tôi để chọn sản phẩm phù hợp.
             </p>
             <Link href="/products" className="mt-6">
               <Button className="bg-primary text-primary-foreground hover:bg-primary-container h-12 px-8 rounded-lg font-headline text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer">
@@ -46,7 +49,8 @@ export default function CartPage() {
             {/* Items List */}
             <div className="lg:col-span-2 bg-white border border-outline-variant/30 rounded-xxl p-5 sm:p-6 shadow-sm flex flex-col gap-1">
               <h3 className="font-headline text-base font-bold text-on-surface mb-4">
-                Danh sách sản phẩm ({items.reduce((acc, curr) => acc + curr.quantity, 0)})
+                Danh sách sản phẩm (
+                {items.reduce((acc, curr) => acc + curr.quantity, 0)})
               </h3>
               <div className="flex flex-col">
                 {items.map((item) => (
@@ -79,6 +83,7 @@ export default function CartPage() {
             </div>
           </div>
         )}
+        </ProtectedRoute>
       </main>
 
       <Footer />

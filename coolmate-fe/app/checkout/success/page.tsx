@@ -1,16 +1,24 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
+import { orderApi } from "@/services/orderApi";
+import { Order } from "@/types/order";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId") || "ord-unknown";
+  const orderId = searchParams.get("orderId");
+  const [order, setOrder] = useState<Order | null>(null);
+
+  useEffect(() => {
+    if (!orderId) return;
+    orderApi.getOrderById(orderId).then(setOrder).catch(() => setOrder(null));
+  }, [orderId]);
 
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center max-w-lg mx-auto px-4">
@@ -29,8 +37,14 @@ function SuccessContent() {
       <div className="bg-white border border-outline-variant/30 rounded-xl p-4 sm:p-5 w-full my-8 text-left shadow-sm">
         <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant border-b border-outline-variant/30 pb-3 mb-3">
           <span>Mã đơn hàng:</span>
-          <span className="font-mono text-primary font-bold text-sm">{orderId}</span>
+          <span className="font-mono text-primary font-bold text-sm">{order?.code ?? orderId ?? "Đang cập nhật"}</span>
         </div>
+        {order && (
+          <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant border-b border-outline-variant/30 pb-3 mb-3">
+            <span>Tổng tiền:</span>
+            <span className="text-on-surface">{order.totalAmount.toLocaleString("vi-VN")}đ</span>
+          </div>
+        )}
         <p className="text-xs text-on-surface-variant leading-relaxed">
           Chúng tôi đã gửi thông tin xác nhận chi tiết đơn hàng đến email của bạn.
           Thông tin giao hàng sẽ được cập nhật liên tục qua tin nhắn số điện thoại.

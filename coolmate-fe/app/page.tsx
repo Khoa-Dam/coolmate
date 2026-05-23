@@ -2,12 +2,29 @@ import Link from "next/link";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { ProductCard } from "./components/ProductCard";
-import { mockApi } from "./services/mockApi";
+import { ProductCarousel } from "./components/ProductCarousel";
+import { productApi } from "@/services/productApi";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Truck, RefreshCw, ShieldCheck, Ruler } from "lucide-react";
 
-export default function Home() {
-  const bestSellers = mockApi.getProducts().filter((product) => product.isBestSeller).slice(0, 4);
+export default async function Home() {
+  const fetchProducts = (
+    params: Parameters<typeof productApi.getProducts>[0],
+  ) =>
+    productApi
+      .getProducts(params)
+      .then((response) => response.items)
+      .catch(() => []);
+
+  const [bestSellers, tshirts, polos, shorts, homewear, accessories] =
+    await Promise.all([
+      fetchProducts({ limit: 12 }),
+      fetchProducts({ category: "ao-thun", limit: 12 }),
+      fetchProducts({ category: "ao-polo", limit: 12 }),
+      fetchProducts({ category: "quan-short", limit: 12 }),
+      fetchProducts({ category: "do-mac-nha", limit: 12 }),
+      fetchProducts({ category: "phu-kien", limit: 12 }),
+    ]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -21,7 +38,7 @@ export default function Home() {
             <img
               alt="NovaWear Hero"
               className="w-full h-full object-cover object-center opacity-70"
-              src="https://images.unsplash.com/photo-1549064482-6779ba3292fe?w=1600&auto=format&fit=crop&q=80"
+              src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1600&auto=format&fit=crop&q=80"
             />
             {/* Gradient overlay for readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -29,10 +46,13 @@ export default function Home() {
 
           <div className="relative z-10 text-center px-gutter-mobile md:px-gutter-desktop max-w-4xl mx-auto flex flex-col items-center gap-6 mt-12 md:mt-20">
             <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-              Mặc thoải mái.<br />Sống năng động.
+              Mặc thoải mái.
+              <br />
+              Sống năng động.
             </h1>
             <p className="font-sans text-sm sm:text-base md:text-lg text-zinc-200 max-w-2xl mx-auto leading-relaxed drop-shadow-sm font-medium">
-              Thời trang cơ bản và thể thao cho mỗi ngày. Thiết kế tinh giản, chất liệu cao cấp mang đến trải nghiệm dễ chịu tuyệt đối.
+              Thời trang cơ bản và thể thao cho mỗi ngày. Thiết kế tinh giản,
+              chất liệu cao cấp mang đến trải nghiệm dễ chịu tuyệt đối.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full sm:w-auto">
               <Link href="/products" className="w-full sm:w-auto">
@@ -107,7 +127,10 @@ export default function Home() {
               <div className="absolute bottom-6 left-6 text-on-primary">
                 <h3 className="font-headline-sm text-headline-sm">Áo thun</h3>
                 <p className="font-label-sm text-label-sm mt-1 opacity-80 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  Khám phá <span className="material-symbols-outlined text-xs">arrow_outward</span>
+                  Khám phá{" "}
+                  <span className="material-symbols-outlined text-xs">
+                    arrow_outward
+                  </span>
                 </p>
               </div>
             </Link>
@@ -118,7 +141,9 @@ export default function Home() {
               className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
             >
               <div className="absolute inset-0 flex items-center justify-center bg-secondary-container group-hover:bg-surface-container-high transition-colors">
-                <span className="material-symbols-outlined text-4xl text-on-surface-variant">apparel</span>
+                <span className="material-symbols-outlined text-4xl text-on-surface-variant">
+                  apparel
+                </span>
               </div>
               <div className="absolute bottom-4 left-4 text-on-surface">
                 <h3 className="font-label-md text-label-md">Polo</h3>
@@ -155,8 +180,12 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
               <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 text-on-primary">
-                <h3 className="font-headline-sm text-headline-sm">Đồ chạy bộ</h3>
-                <p className="font-label-sm text-label-sm mt-1">Sẵn sàng bứt tốc</p>
+                <h3 className="font-headline-sm text-headline-sm">
+                  Đồ chạy bộ
+                </h3>
+                <p className="font-label-sm text-label-sm mt-1">
+                  Sẵn sàng bứt tốc
+                </p>
               </div>
             </Link>
 
@@ -166,7 +195,9 @@ export default function Home() {
               className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
             >
               <div className="absolute inset-0 flex items-center justify-center bg-surface-container-high group-hover:bg-surface-container-highest transition-colors">
-                <span className="material-symbols-outlined text-4xl text-on-surface-variant">checkroom</span>
+                <span className="material-symbols-outlined text-4xl text-on-surface-variant">
+                  checkroom
+                </span>
               </div>
               <div className="absolute bottom-4 left-4 text-on-surface">
                 <h3 className="font-label-md text-label-md">Đồ lót</h3>
@@ -179,7 +210,9 @@ export default function Home() {
               className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
             >
               <div className="absolute inset-0 flex items-center justify-center bg-tertiary-container text-on-tertiary-container group-hover:bg-tertiary transition-colors">
-                <span className="material-symbols-outlined text-4xl">sports_tennis</span>
+                <span className="material-symbols-outlined text-4xl">
+                  sports_tennis
+                </span>
               </div>
               <div className="absolute bottom-4 left-4 text-on-tertiary-container">
                 <h3 className="font-label-md text-label-md">Pickleball</h3>
@@ -188,8 +221,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Best Sellers Section */}
-        <section className="py-16 md:py-20 px-gutter-mobile md:px-gutter-desktop max-w-container-max mx-auto bg-zinc-50 border-t border-outline-variant/20">
+        {/* Product Rails */}
+        <section className="border-t border-outline-variant/20 bg-zinc-50 px-gutter-mobile py-10 md:px-gutter-desktop md:py-14">
           <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 gap-4">
             <div className="text-center sm:text-left">
               <h2 className="font-headline text-xl md:text-2xl font-black text-on-surface uppercase tracking-tight">
@@ -199,25 +232,72 @@ export default function Home() {
                 Những items được yêu thích nhất từ khách hàng của chúng tôi.
               </p>
             </div>
-            <Link href="/products" className="hidden sm:block">
-              <Button variant="outline" className="border-outline-variant text-on-surface hover:bg-surface-container rounded-lg font-headline text-xs font-bold uppercase tracking-wider h-11 px-6 cursor-pointer">
+            <Link
+              href="/products?filter=best-seller"
+              className="hidden sm:block"
+            >
+              <Button
+                variant="outline"
+                className="border-outline-variant text-on-surface hover:bg-surface-container rounded-lg font-headline text-xs font-bold uppercase tracking-wider h-11 px-6 cursor-pointer"
+              >
                 Xem tất cả
               </Button>
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 md:gap-6">
             {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div
+                key={product.id}
+                className="min-w-[74%] snap-start sm:min-w-[42%] lg:min-w-[29%] xl:min-w-[23%]"
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
 
           <div className="text-center mt-10 sm:hidden">
-            <Link href="/products">
-              <Button variant="outline" className="border-outline-variant text-on-surface w-full h-11 rounded-lg font-headline text-xs font-bold uppercase tracking-wider">
+            <Link href="/products?filter=best-seller">
+              <Button
+                variant="outline"
+                className="border-outline-variant text-on-surface w-full h-11 rounded-lg font-headline text-xs font-bold uppercase tracking-wider"
+              >
                 Xem tất cả
               </Button>
             </Link>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-container-max">
+            <ProductCarousel
+              title="Áo thun"
+              description="Form dễ mặc, chất liệu thoáng cho mỗi ngày."
+              products={tshirts}
+              href="/products?category=ao-thun"
+            />
+            <ProductCarousel
+              title="Áo Polo"
+              description="Gọn gàng cho đi làm, đi chơi và vận động nhẹ."
+              products={polos}
+              href="/products?category=ao-polo"
+            />
+            <ProductCarousel
+              title="Quần Short"
+              description="Linh hoạt cho tập luyện và sinh hoạt hằng ngày."
+              products={shorts}
+              href="/products?category=quan-short"
+            />
+            <ProductCarousel
+              title="Đồ mặc nhà"
+              description="Êm, nhẹ và thoải mái trong mọi chuyển động."
+              products={homewear}
+              href="/products?category=do-mac-nha"
+            />
+            <ProductCarousel
+              title="Phụ kiện"
+              description="Những món nhỏ hoàn thiện set đồ NovaWear."
+              products={accessories}
+              href="/products?category=phu-kien"
+            />
           </div>
         </section>
       </main>

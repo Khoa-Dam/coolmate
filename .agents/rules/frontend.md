@@ -16,11 +16,11 @@
 
 ## Component placement
 
-- Page-specific components must live close to the route/page that owns them. Example: login-only UI belongs under the login route folder, not global `components/`.
-- Shared app components used across multiple pages can live in global `components/`.
-- Low-level reusable shadcn/ui primitives belong in the configured shadcn UI directory, usually `components/ui/`.
-- If a component starts page-specific and later has at least two real reuse sites, then move it to global `components/`.
-- Do not create broad global component folders for one-off page sections.
+- Page/route-specific components must live inside that route folder under `components/`. Example: checkout-only UI belongs in `app/checkout/components/`, next to `app/checkout/page.tsx` and optional `layout.tsx`.
+- Shared app components used across multiple routes belong in `app/components/`.
+- Low-level reusable shadcn/ui primitives belong in the configured shadcn UI directory, usually root `components/ui/`.
+- If a route-local component becomes reused by another route, move it from `app/<route>/components/` to `app/components/`.
+- Do not put one-page-only components in `app/components/`; keep global components reserved for actual shared UI such as Header, Footer, ProductCard, CartDrawer, and shared selectors.
 
 ## UI quality
 

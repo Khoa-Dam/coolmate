@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
-import { mockApi } from "../../services/mockApi";
-import { Order } from "../../types/order";
-import { OrderStatusBadge } from "../../components/OrderStatusBadge";
+import { AdminRoute } from "../../components/AdminRoute";
+import { orderApi } from "@/services/orderApi";
+import { Order } from "@/types/order";
+import { OrderStatusBadge } from "./components/OrderStatusBadge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -22,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eye, CheckCircle2 } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
@@ -35,19 +36,24 @@ import {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    setOrders(mockApi.getOrders());
+    orderApi
+      .getAdminOrders()
+      .then(setOrders)
+      .catch((error) => setError(error instanceof Error ? error.message : "Không thể tải đơn hàng"))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const handleStatusChange = (orderId: string, status: Order["orderStatus"]) => {
-    mockApi.updateOrderStatus(orderId, status);
-    setOrders(mockApi.getOrders());
+  const handleStatusChange = async (orderId: string, status: Order["orderStatus"]) => {
+    await orderApi.updateOrderStatus(orderId, { orderStatus: status });
+    setOrders(await orderApi.getAdminOrders());
   };
 
   const handlePaymentChange = (orderId: string, status: Order["paymentStatus"]) => {
-    mockApi.updateOrderPaymentStatus(orderId, status);
-    setOrders(mockApi.getOrders());
+    setOrders((orders) => orders.map((order) => (order.id === orderId ? { ...order, paymentStatus: status } : order)));
   };
 
   return (
@@ -55,6 +61,7 @@ export default function AdminOrdersPage() {
       <Header />
 
       <main className="flex-grow max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full">
+        <AdminRoute>
         <div className="mb-8 border-b border-outline-variant/30 pb-5">
           <h1 className="font-headline text-xl md:text-2xl font-black text-on-surface uppercase tracking-tight">
             Quản lý đơn hàng (Mock API)
@@ -63,6 +70,8 @@ export default function AdminOrdersPage() {
             Admin console / Danh sách đơn hàng từ checkout hoặc seed data
           </p>
         </div>
+        {error && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700">{error}</div>}
+        {isLoading && <p className="mb-4 text-sm text-on-surface-variant">Đang tải đơn hàng...</p>}
 
         {/* Orders Table */}
         <div className="bg-white border border-outline-variant/30 rounded-xxl overflow-hidden shadow-sm">
@@ -219,6 +228,7 @@ export default function AdminOrdersPage() {
             </TableBody>
           </Table>
         </div>
+        </AdminRoute>
       </main>
 
       <Footer />

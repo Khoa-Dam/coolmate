@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "../../../../components/Header";
 import { Footer } from "../../../../components/Footer";
-import { AdminProductForm } from "../../../../components/AdminProductForm";
-import { mockApi } from "../../../../services/mockApi";
-import { Product } from "../../../../types/product";
+import { AdminRoute } from "../../../../components/AdminRoute";
+import { AdminProductForm } from "../../components/AdminProductForm";
+import { productApi } from "@/services/productApi";
+import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -24,16 +25,15 @@ export default function AdminProductEditPage({ params }: AdminProductEditPagePro
   const id = unwrappedParams.id;
 
   useEffect(() => {
-    const allProds = mockApi.getProducts();
-    const found = allProds.find((p) => p.id === id);
-    if (found) {
-      setProduct(found);
-    }
-    setLoading(false);
+    productApi
+      .getProductById(id)
+      .then(setProduct)
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false));
   }, [id]);
 
-  const handleSubmit = (data: Omit<Product, "id"> & { id?: string }) => {
-    mockApi.saveProduct(data);
+  const handleSubmit = async (data: Omit<Product, "id"> & { id?: string }) => {
+    await productApi.updateProduct(id, data);
     router.push("/admin/products");
   };
 
@@ -78,11 +78,13 @@ export default function AdminProductEditPage({ params }: AdminProductEditPagePro
       <Header />
 
       <main className="flex-grow max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full">
+        <AdminRoute>
         <AdminProductForm
           initialData={product}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
         />
+        </AdminRoute>
       </main>
 
       <Footer />

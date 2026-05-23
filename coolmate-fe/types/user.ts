@@ -2,6 +2,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "user";
+  role: "ADMIN" | "USER" | "admin" | "user";
   token?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

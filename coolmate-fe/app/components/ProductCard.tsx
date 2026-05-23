@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Product } from "../types/product";
-import { useCart } from "../context/CartContext";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Product } from "../../types/product";
+import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 
 interface ProductCardProps {
@@ -13,19 +11,24 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, isLoading } = useCart();
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || "");
 
   // Calculate discount percentage if exists
-  const discount = product.originalPrice > product.price
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : 0;
+  const discount =
+    (product.originalPrice ?? product.price) > product.price
+      ? Math.round(
+          (((product.originalPrice ?? product.price) - product.price) /
+            (product.originalPrice ?? product.price)) *
+            100,
+        )
+      : 0;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault(); // Stop routing
     const defaultSize = product.sizes[0] || "M";
-    addToCart(product, defaultSize, selectedColor, 1);
+    void addToCart(product, defaultSize, selectedColor, 1);
     // Alert or feedback can be added later
   };
 
@@ -37,19 +40,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="group relative bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full border border-outline-variant/10">
       {/* Badges */}
-      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
+      <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
         {product.isBestSeller && (
-          <span className="bg-error text-on-error font-label-sm text-[11px] font-semibold px-2.5 py-1 rounded shadow-sm select-none">
+          <span className="bg-error text-on-error font-label-sm text-[10px] font-semibold px-2 py-0.5 rounded shadow-sm select-none">
             Bán chạy
           </span>
         )}
         {product.isNew && (
-          <span className="bg-surface text-on-surface font-label-sm text-[11px] font-semibold px-2.5 py-1 rounded shadow-sm border border-outline-variant/30 select-none">
+          <span className="bg-surface text-on-surface font-label-sm text-[10px] font-semibold px-2 py-0.5 rounded shadow-sm border border-outline-variant/30 select-none">
             Mới
           </span>
         )}
         {discount > 0 && (
-          <span className="bg-tertiary text-on-tertiary font-label-sm text-[11px] font-semibold px-2.5 py-1 rounded shadow-sm select-none">
+          <span className="bg-tertiary text-on-tertiary font-label-sm text-[10px] font-semibold px-2 py-0.5 rounded shadow-sm select-none">
             -{discount}%
           </span>
         )}
@@ -59,12 +62,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <button
         type="button"
         onClick={toggleFavorite}
-        aria-label={isFavorite ? "Bỏ khỏi danh sách yêu thích" : "Thêm vào danh sách yêu thích"}
+        aria-label={
+          isFavorite
+            ? "Bỏ khỏi danh sách yêu thích"
+            : "Thêm vào danh sách yêu thích"
+        }
         aria-pressed={isFavorite}
-        className="absolute top-3 right-3 z-10 flex p-2 bg-surface/80 backdrop-blur rounded-full text-on-surface opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 hover:text-primary cursor-pointer shadow-sm"
+        className="absolute top-2 right-2 z-10 flex p-1.5 bg-surface/80 backdrop-blur rounded-full text-on-surface opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 hover:text-primary cursor-pointer shadow-sm"
       >
         <span
-          className={`material-symbols-outlined text-[18px] ${
+          className={`material-symbols-outlined text-[16px] ${
             isFavorite ? "fill-icon text-red-500" : ""
           }`}
         >
@@ -73,7 +80,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </button>
 
       {/* Product Image Link */}
-      <Link href={`/products/${product.slug}`} className="block overflow-hidden bg-surface-container-high w-full relative aspect-[3/4]">
+      <Link
+        href={`/products/${product.slug}`}
+        className="block overflow-hidden bg-surface-container-high w-full relative aspect-[3/4]"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={product.imageUrl}
@@ -81,10 +91,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {/* Quick Add button on hover */}
-        <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100 flex gap-2 z-10">
+        <div className="absolute bottom-0 left-0 w-full p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100 flex gap-2 z-10">
           <Button
+            disabled={isLoading}
             onClick={handleQuickAdd}
-            className="w-full bg-on-surface text-surface hover:bg-on-surface/90 font-label-md text-xs font-semibold h-10 rounded-lg shadow-md cursor-pointer transition-colors"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary-container font-label-md text-xs font-semibold h-9 rounded-lg shadow-md cursor-pointer transition-colors disabled:pointer-events-none disabled:opacity-70"
           >
             Thêm nhanh
           </Button>
@@ -92,10 +103,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </Link>
 
       {/* Product Details */}
-      <div className="p-4 flex flex-col flex-grow bg-white">
+      <div className="p-2.5 flex flex-col flex-grow bg-white">
         {/* Color swatches */}
         {product.colors.length > 0 && (
-          <div className="flex gap-1.5 mb-2.5">
+          <div className="flex gap-1 mb-2">
             {product.colors.map((color) => {
               const isActive = selectedColor === color;
               let colorBg = "#ccc";
@@ -129,20 +140,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
 
         {/* Title */}
-        <Link href={`/products/${product.slug}`} className="hover:text-primary transition-colors block mb-2">
-          <h3 className="font-body-md text-on-surface font-medium truncate text-sm">
+        <Link
+          href={`/products/${product.slug}`}
+          className="hover:text-primary transition-colors block mb-1"
+        >
+          <h3 className="font-body-md text-on-surface font-medium truncate text-xs">
             {product.name}
           </h3>
         </Link>
 
         {/* Price */}
-        <div className="flex items-center gap-2 mt-auto">
-          <span className="font-label-md text-on-surface font-semibold text-sm">
+        <div className="flex items-center gap-1.5 mt-auto">
+          <span className="font-label-md text-on-surface font-semibold text-xs">
             {product.price.toLocaleString("vi-VN")}đ
           </span>
-          {product.originalPrice > product.price && (
-            <span className="text-xs text-on-surface-variant/70 line-through">
-              {product.originalPrice.toLocaleString("vi-VN")}đ
+          {(product.originalPrice ?? product.price) > product.price && (
+            <span className="text-[10px] text-on-surface-variant/70 line-through">
+              {(product.originalPrice ?? product.price).toLocaleString("vi-VN")}
+              đ
             </span>
           )}
         </div>
