@@ -2,13 +2,13 @@
   "name": "novawear",
   "private": true,
   "scripts": {
-    "dev": "npm run dev --prefix coolmate-be & npm run dev --prefix coolmate-fe",
-    "dev:web": "npm run dev --prefix coolmate-fe",
-    "dev:api": "npm run dev --prefix coolmate-be",
-    "build": "npm run build --prefix coolmate-be && npm run build --prefix coolmate-fe",
-    "build:api": "npm run build --prefix coolmate-be",
-    "build:web": "npm run build --prefix coolmate-fe",
-    "start": "npm start --prefix coolmate-be",
-    "lint": "npm run lint --prefix coolmate-be && npm run lint --prefix coolmate-fe"
+    "dev": "pnpm --stream -r --parallel --filter coolmate-be --filter coolmate-fe run dev",
+    "dev:web": "pnpm --filter coolmate-fe dev",
+    "dev:api": "pnpm --filter coolmate-be dev",
+    "build": "pnpm --filter coolmate-be build && pnpm --filter coolmate-fe build",
+    "build:api": "pnpm --filter coolmate-be build",
+    "build:web": "pnpm --filter coolmate-fe build",
+    "start": "pnpm --filter coolmate-be start",
+    "lint": "pnpm --filter coolmate-be lint && pnpm --filter coolmate-fe lint"
   }
 }
