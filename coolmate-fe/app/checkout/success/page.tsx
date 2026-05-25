@@ -3,11 +3,11 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Header } from "../../components/Header";
-import { Footer } from "../../components/Footer";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
-import { orderApi } from "@/services/orderApi";
+import { orderApi } from "@/services/order.service";
 import { Order } from "@/types/order";
 
 function SuccessContent() {
@@ -17,7 +17,10 @@ function SuccessContent() {
 
   useEffect(() => {
     if (!orderId) return;
-    orderApi.getOrderById(orderId).then(setOrder).catch(() => setOrder(null));
+    orderApi
+      .getOrderById(orderId)
+      .then(setOrder)
+      .catch(() => setOrder(null));
   }, [orderId]);
 
   return (
@@ -30,31 +33,40 @@ function SuccessContent() {
         Đặt hàng thành công!
       </h1>
       <p className="text-sm text-on-surface-variant font-medium mt-3">
-        Cảm ơn bạn đã lựa chọn mua sắm tại NovaWear. Đơn hàng của bạn đã được tiếp nhận và đang được xử lý.
+        Cảm ơn bạn đã lựa chọn mua sắm tại NovaWear. Đơn hàng của bạn đã được
+        tiếp nhận và đang được xử lý.
       </p>
 
       {/* Order Info */}
       <div className="bg-white border border-outline-variant/30 rounded-xl p-4 sm:p-5 w-full my-8 text-left shadow-sm">
         <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant border-b border-outline-variant/30 pb-3 mb-3">
           <span>Mã đơn hàng:</span>
-          <span className="font-mono text-primary font-bold text-sm">{order?.code ?? orderId ?? "Đang cập nhật"}</span>
+          <span className="font-mono text-primary font-bold text-sm">
+            {order?.code ?? orderId ?? "Đang cập nhật"}
+          </span>
         </div>
         {order && (
           <div className="flex justify-between items-center text-xs font-semibold text-on-surface-variant border-b border-outline-variant/30 pb-3 mb-3">
             <span>Tổng tiền:</span>
-            <span className="text-on-surface">{order.totalAmount.toLocaleString("vi-VN")}đ</span>
+            <span className="text-on-surface">
+              {order.totalAmount.toLocaleString("vi-VN")}đ
+            </span>
           </div>
         )}
         <p className="text-xs text-on-surface-variant leading-relaxed">
-          Chúng tôi đã gửi thông tin xác nhận chi tiết đơn hàng đến email của bạn.
-          Thông tin giao hàng sẽ được cập nhật liên tục qua tin nhắn số điện thoại.
+          Chúng tôi đã gửi thông tin xác nhận chi tiết đơn hàng đến email của
+          bạn. Thông tin giao hàng sẽ được cập nhật liên tục qua tin nhắn số
+          điện thoại.
         </p>
       </div>
 
       {/* Buttons Actions */}
       <div className="flex flex-col sm:flex-row gap-3 w-full">
         <Link href="/products" className="flex-grow">
-          <Button variant="outline" className="w-full border-outline-variant text-on-surface hover:bg-surface-container h-12 rounded-lg font-headline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            className="w-full border-outline-variant text-on-surface hover:bg-surface-container h-12 rounded-lg font-headline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+          >
             <ShoppingBag className="size-4" /> Tiếp tục mua sắm
           </Button>
         </Link>
@@ -73,7 +85,9 @@ export default function CheckoutSuccessPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full flex items-center justify-center">
-        <Suspense fallback={<div className="text-center py-20">Đang tải...</div>}>
+        <Suspense
+          fallback={<div className="text-center py-20">Đang tải...</div>}
+        >
           <SuccessContent />
         </Suspense>
       </main>

@@ -7,10 +7,10 @@ interface ColorSelectorProps {
 }
 
 const colorMap: Record<string, string> = {
-  "Trắng": "#ffffff",
-  "Đen": "#1a1c1c",
+  Trắng: "#ffffff",
+  Đen: "#1a1c1c",
   "Xanh Navy": "#1e3a8a",
-  "Xám": "#808080",
+  Xám: "#808080",
   "Xanh Rêu": "#4b5320",
 };
 
@@ -19,11 +19,14 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
   selectedColor,
   onChange,
 }) => {
+  if (colors.length === 0) return null;
+
   return (
     <div className="mb-6">
-      <h3 className="font-label-md text-label-md text-on-surface mb-3 flex items-center">
-        Màu sắc: <span className="font-body-md font-normal ml-2">{selectedColor}</span>
-      </h3>
+      <h2 className="mb-3 flex items-center text-label-md font-label-md text-on-surface">
+        Màu sắc:
+        <span className="ml-2 font-body-md font-normal">{selectedColor}</span>
+      </h2>
       <div className="flex gap-3">
         {colors.map((color) => {
           const isSelected = selectedColor === color;
@@ -33,13 +36,16 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
             <button
               key={color}
               type="button"
-              className={`size-10 rounded-full transition-all duration-200 cursor-pointer ${
-                isSelected ? "border-2 border-primary" : "border border-outline-variant hover:border-on-surface"
+              className={`size-10 cursor-pointer rounded-full transition-all duration-200 ${
+                isSelected
+                  ? "border-2 border-primary"
+                  : "border border-outline-variant hover:border-on-surface"
               }`}
               style={{ backgroundColor: colorHex }}
               onClick={() => onChange(color)}
               title={color}
               aria-label={`Chọn màu ${color}`}
+              aria-pressed={isSelected}
             />
           );
         })}

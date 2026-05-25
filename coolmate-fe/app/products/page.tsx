@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { ProductCarousel } from "../components/ProductCarousel";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { ProductCarousel } from "@/components/product/product-carousel";
 import { ProductGrid } from "./components/ProductGrid";
-import { productApi } from "@/services/productApi";
+import { productApi } from "@/services/product.service";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 type ProductsPageProps = {
   searchParams: Promise<{
@@ -36,7 +37,10 @@ const priceFilters = [
 
 const getPageTitle = (gender?: string, category?: string, filter?: string) => {
   if (category) {
-    return categoryFilters.find((item) => item.slug === category)?.label ?? "Sản phẩm";
+    return (
+      categoryFilters.find((item) => item.slug === category)?.label ??
+      "Sản phẩm"
+    );
   }
   if (gender === "nam") return "Đồ nam";
   if (gender === "nu") return "Đồ nữ";
@@ -54,7 +58,12 @@ const buildCategoryHref = (slug: string, gender?: string) => {
 };
 
 const buildPriceHref = (
-  current: { gender?: string; category?: string; search?: string; filter?: string },
+  current: {
+    gender?: string;
+    category?: string;
+    search?: string;
+    filter?: string;
+  },
   price: { minPrice?: number; maxPrice?: number },
 ) => {
   const params = new URLSearchParams();
@@ -62,8 +71,10 @@ const buildPriceHref = (
   if (current.category) params.set("category", current.category);
   if (current.search) params.set("search", current.search);
   if (current.filter) params.set("filter", current.filter);
-  if (price.minPrice !== undefined) params.set("minPrice", String(price.minPrice));
-  if (price.maxPrice !== undefined) params.set("maxPrice", String(price.maxPrice));
+  if (price.minPrice !== undefined)
+    params.set("minPrice", String(price.minPrice));
+  if (price.maxPrice !== undefined)
+    params.set("maxPrice", String(price.maxPrice));
   return `/products?${params.toString()}`;
 };
 
@@ -72,38 +83,52 @@ const formatPriceRange = (minPrice?: number, maxPrice?: number) => {
     return `${minPrice.toLocaleString("vi-VN")}đ - ${maxPrice.toLocaleString("vi-VN")}đ`;
   }
   if (minPrice !== undefined) return `${minPrice.toLocaleString("vi-VN")}đ+`;
-  if (maxPrice !== undefined) return `0đ - ${maxPrice.toLocaleString("vi-VN")}đ`;
+  if (maxPrice !== undefined)
+    return `0đ - ${maxPrice.toLocaleString("vi-VN")}đ`;
   return "0đ - 1.000.000đ+";
 };
 
 const getRailProducts = (category: string) =>
   productApi
-    .getProducts({ category, limit: 12 })
+    .getProducts({ category, limit: 12, view: "card" })
     .then((response) => response.items)
     .catch(() => []);
 
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({
+  searchParams,
+}: ProductsPageProps) {
   const params = await searchParams;
   const pageTitle = getPageTitle(params.gender, params.category, params.filter);
   const minPrice = params.minPrice ? Number(params.minPrice) : undefined;
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
-  const apiSearch = params.search ?? (params.gender === "nam" ? "nam" : params.gender === "nu" ? "nữ" : undefined);
-  const [result, activeCategoryRail, tshirts, polos, shorts] = await Promise.all([
-    productApi
-      .getProducts({
-        category: params.category,
-        search: params.category ? params.search : apiSearch,
-        minPrice,
-        maxPrice,
-        page: params.page ? Number(params.page) : 1,
-        limit: 24,
-      })
-      .catch(() => ({ items: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } })),
-    params.category ? getRailProducts(params.category) : Promise.resolve([]),
-    params.category ? Promise.resolve([]) : getRailProducts("ao-thun"),
-    params.category ? Promise.resolve([]) : getRailProducts("ao-polo"),
-    params.category ? Promise.resolve([]) : getRailProducts("quan-short"),
-  ]);
+  const apiSearch =
+    params.search ??
+    (params.gender === "nam"
+      ? "nam"
+      : params.gender === "nu"
+        ? "nữ"
+        : undefined);
+  const [result, activeCategoryRail, tshirts, polos, shorts] =
+    await Promise.all([
+      productApi
+        .getProducts({
+          category: params.category,
+          search: params.category ? params.search : apiSearch,
+          minPrice,
+          maxPrice,
+          page: params.page ? Number(params.page) : 1,
+          limit: 24,
+          view: "card",
+        })
+        .catch(() => ({
+          items: [],
+          meta: { total: 0, page: 1, limit: 24, totalPages: 0 },
+        })),
+      params.category ? getRailProducts(params.category) : Promise.resolve([]),
+      params.category ? Promise.resolve([]) : getRailProducts("ao-thun"),
+      params.category ? Promise.resolve([]) : getRailProducts("ao-polo"),
+      params.category ? Promise.resolve([]) : getRailProducts("quan-short"),
+    ]);
 
   return (
     <div className="flex min-h-screen flex-col bg-surface">
@@ -114,7 +139,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <Link className="hover:text-primary" href="/">
               Trang chủ
             </Link>
-            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+            <ChevronRight className="size-4" />
             <span className="text-on-surface">{pageTitle}</span>
           </nav>
           <h1 className="font-display-lg text-display-lg-mobile text-on-surface md:text-display-lg">
@@ -126,7 +151,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <aside className="hidden w-64 shrink-0 md:block">
             <div className="sticky top-24 space-y-8">
               <div className="border-b border-outline-variant pb-6">
-                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">Danh mục</h2>
+                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">
+                  Danh mục
+                </h2>
                 <ul className="space-y-3 font-body-md text-on-surface-variant">
                   {categoryFilters.map((category) => {
                     const isActive = params.category === category.slug;
@@ -140,7 +167,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                         >
                           <span
                             className={`size-5 rounded border ${
-                              isActive ? "border-primary bg-primary" : "border-outline"
+                              isActive
+                                ? "border-primary bg-primary"
+                                : "border-outline"
                             }`}
                           />
                           <span>
@@ -154,7 +183,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </div>
 
               <div className="border-b border-outline-variant pb-6">
-                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">Kích cỡ</h2>
+                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">
+                  Kích cỡ
+                </h2>
                 <div className="flex flex-wrap gap-2">
                   {sizeFilters.map((size, index) => (
                     <button
@@ -173,11 +204,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </div>
 
               <div className="border-b border-outline-variant pb-6">
-                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">Giá</h2>
+                <h2 className="mb-4 font-headline text-[18px] font-semibold text-on-surface">
+                  Giá
+                </h2>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     {priceFilters.map((price) => {
-                      const isActive = minPrice === price.minPrice && maxPrice === price.maxPrice;
+                      const isActive =
+                        minPrice === price.minPrice &&
+                        maxPrice === price.maxPrice;
                       return (
                         <Link
                           key={price.label}
@@ -195,16 +230,24 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1 rounded-lg border border-outline-variant bg-surface-container-low p-2">
-                      <span className="mb-1 block text-label-sm text-on-surface-variant">Từ</span>
+                      <span className="mb-1 block text-label-sm text-on-surface-variant">
+                        Từ
+                      </span>
                       <span className="font-body-md text-on-surface">
-                        {minPrice !== undefined ? `${minPrice.toLocaleString("vi-VN")}đ` : "0đ"}
+                        {minPrice !== undefined
+                          ? `${minPrice.toLocaleString("vi-VN")}đ`
+                          : "0đ"}
                       </span>
                     </div>
                     <span className="text-on-surface-variant">-</span>
                     <div className="flex-1 rounded-lg border border-outline-variant bg-surface-container-low p-2">
-                      <span className="mb-1 block text-label-sm text-on-surface-variant">Đến</span>
+                      <span className="mb-1 block text-label-sm text-on-surface-variant">
+                        Đến
+                      </span>
                       <span className="font-body-md text-on-surface">
-                        {maxPrice !== undefined ? `${maxPrice.toLocaleString("vi-VN")}đ` : "1.000.000đ+"}
+                        {maxPrice !== undefined
+                          ? `${maxPrice.toLocaleString("vi-VN")}đ`
+                          : "1.000.000đ+"}
                       </span>
                     </div>
                   </div>
@@ -263,17 +306,29 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 )}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Link href="/products" className="rounded-full bg-on-surface px-4 py-2 font-label-sm text-surface">
+                <Link
+                  href="/products"
+                  className="rounded-full bg-on-surface px-4 py-2 font-label-sm text-surface"
+                >
                   Tất cả sản phẩm
                 </Link>
-                <Link href="/products?filter=best-seller" className="rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface">
+                <Link
+                  href="/products?filter=best-seller"
+                  className="rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface"
+                >
                   Bán chạy
                 </Link>
-                <Link href="/products?filter=new" className="rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface">
+                <Link
+                  href="/products?filter=new"
+                  className="rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface"
+                >
                   Sản phẩm mới
                 </Link>
-                <button className="flex items-center gap-1 rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface" type="button">
-                  Sắp xếp <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                <button
+                  className="flex items-center gap-1 rounded-full border border-outline-variant bg-surface px-4 py-2 font-label-sm text-on-surface transition-colors hover:border-on-surface"
+                  type="button"
+                >
+                  Sắp xếp <ChevronDown className="size-4" />
                 </button>
               </div>
             </div>

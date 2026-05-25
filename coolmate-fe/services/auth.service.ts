@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/apiClient";
+import { apiClient } from "@/services/api-client.service";
 import { setAccessToken } from "@/utils/authStorage";
 import { User } from "@/types/user";
 

@@ -1,6 +1,7 @@
-﻿import React from "react";
+import React from "react";
+import { SearchX } from "lucide-react";
 import { Product } from "@/types/product";
-import { ProductCard } from "../../components/ProductCard";
+import { ProductCard } from "@/components/product/product-card";
 
 interface ProductGridProps {
   products: Product[];
@@ -10,9 +11,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <span className="material-symbols-outlined text-4xl text-on-surface-variant/40 mb-3">
-          sentiment_dissatisfied
-        </span>
+        <SearchX className="mb-3 size-10 text-on-surface-variant/40" />
         <h3 className="font-headline text-lg font-bold text-on-surface">
           Không tìm thấy sản phẩm
         </h3>

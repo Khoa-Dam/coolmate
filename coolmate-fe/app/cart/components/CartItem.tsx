@@ -1,9 +1,11 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import { CartItem as CartItemType } from "@/types/cart";
 import { useCart } from "@/context/CartContext";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import { OptimizedImage } from "@/components/product/optimized-image";
 
 interface CartItemProps {
   item: CartItemType;
@@ -23,11 +25,12 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
         href={`/products/${item.product.slug}`}
         className="w-20 h-25 sm:w-24 sm:h-30 bg-surface-container-low rounded-lg overflow-hidden flex-shrink-0 relative block"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <OptimizedImage
           src={item.product.imageUrl}
           alt={item.product.name}
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 640px) 80px, 96px"
+          className="object-cover"
         />
       </Link>
 
@@ -44,11 +47,9 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
             <button
               onClick={() => removeFromCart(item.id)}
               className="text-on-surface-variant hover:text-destructive p-1 transition-colors cursor-pointer"
-              title="Xóa sản phẩm"
+              title="Xóa s?n ph?m"
             >
-              <span className="material-symbols-outlined text-[18px]">
-                delete
-              </span>
+              <Trash2 className="size-4" />
             </button>
           </div>
 
@@ -68,9 +69,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
               onClick={() => handleQtyChange(item.quantity - 1)}
               disabled={item.quantity <= 1}
             >
-              <span className="material-symbols-outlined text-[14px]">
-                remove
-              </span>
+              <Minus className="size-3.5" />
             </button>
             <span className="w-8 text-center text-xs font-semibold text-on-surface">
               {item.quantity}
@@ -80,21 +79,21 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
               className="h-full px-2 hover:bg-surface-container-low text-on-surface"
               onClick={() => handleQtyChange(item.quantity + 1)}
             >
-              <span className="material-symbols-outlined text-[14px]">add</span>
+              <Plus className="size-3.5" />
             </button>
           </div>
 
           {/* Pricing */}
           <div className="flex flex-col items-end">
             <span className="text-sm font-bold text-on-surface">
-              {(item.product.price * item.quantity).toLocaleString("vi-VN")}đ
+              {(item.product.price * item.quantity).toLocaleString("vi-VN")}d
             </span>
             {(item.product.originalPrice ?? item.product.price) > item.product.price && (
               <span className="text-[11px] text-on-surface-variant/75 line-through">
                 {((item.product.originalPrice ?? item.product.price) * item.quantity).toLocaleString(
                   "vi-VN",
                 )}
-                đ
+                d
               </span>
             )}
           </div>

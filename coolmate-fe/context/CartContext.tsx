@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import { cartApi } from "@/services/cartApi";
+import { cartApi } from "@/services/cart.service";
 import { Cart, CartState } from "@/types/cart";
 import { Product } from "@/types/product";
 

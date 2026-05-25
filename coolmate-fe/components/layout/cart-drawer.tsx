@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { OptimizedImage } from "@/components/product/optimized-image";
 import {
   Sheet,
   SheetContent,
@@ -13,8 +14,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Plus, Minus, Tag, ArrowRight } from "lucide-react";
-import { productApi } from "@/services/productApi";
+import { Trash2, Plus, Minus, Tag, ArrowRight, ShoppingBag } from "lucide-react";
+import { productApi } from "@/services/product.service";
 import { Product } from "@/types/product";
 
 interface CartDrawerProps {
@@ -36,6 +37,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
   const [promoError, setPromoError] = useState("");
   const [promoSuccess, setPromoSuccess] = useState("");
   const [upsellItems, setUpsellItems] = useState<Product[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleApplyPromo = () => {
     setPromoError("");
@@ -51,14 +53,15 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
   };
 
   useEffect(() => {
+    if (!isOpen || upsellItems.length > 0) return;
     productApi
-      .getProducts({ limit: 2 })
+      .getProducts({ limit: 2, view: "card" })
       .then((response) => setUpsellItems(response.items))
       .catch(() => setUpsellItems([]));
-  }, []);
+  }, [isOpen, upsellItems.length]);
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger render={trigger} />
       <SheetContent className="w-full sm:max-w-[440px] bg-surface-container-lowest border-l border-outline-variant/30 flex flex-col h-full p-0 shadow-2xl">
         <SheetHeader className="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-lowest flex-row shrink-0">
@@ -71,9 +74,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
         <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col gap-8 bg-surface-bright">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center text-on-surface-variant font-medium">
-              <span className="material-symbols-outlined text-4xl mb-3 text-on-surface-variant/40">
-                shopping_bag
-              </span>
+              <ShoppingBag className="mb-3 size-10 text-on-surface-variant/40" />
               <p className="text-sm">Giỏ hàng của bạn đang trống.</p>
               <SheetClose
                 render={
@@ -90,11 +91,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4">
                     <div className="w-24 h-32 shrink-0 bg-surface-container-low rounded-md overflow-hidden relative border border-outline-variant/20 shadow-sm">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <OptimizedImage
                         src={item.product.imageUrl}
                         alt={item.product.name}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="96px"
+                        className="object-cover"
                       />
                     </div>
                     <div className="flex flex-col flex-1 justify-between py-1">
@@ -171,11 +173,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ trigger }) => {
                       className="flex flex-col gap-2 p-3 bg-white rounded-lg border border-outline-variant/20 shadow-[0_4px_20px_rgba(0,0,0,0.02)] animate-fade-in"
                     >
                       <div className="w-full aspect-square bg-surface-container-low rounded overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <OptimizedImage
                           src={prod.imageUrl}
                           alt={prod.name}
-                          className="w-full h-full object-cover"
+                          width={180}
+                          height={180}
+                          sizes="180px"
+                          className="h-full w-full object-cover"
                         />
                       </div>
                       <div className="flex flex-col gap-0.5 text-[10px]">

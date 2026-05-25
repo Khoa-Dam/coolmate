@@ -1,5 +1,15 @@
 ﻿import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsInt, IsOptional, IsString, IsUUID, Min, ValidateNested } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
 export class ProductImageDto {
   @IsString()
@@ -75,6 +85,7 @@ export class CreateProductDto {
   images?: ProductImageDto[];
 
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ProductOptionDto)
   options: ProductOptionDto[];

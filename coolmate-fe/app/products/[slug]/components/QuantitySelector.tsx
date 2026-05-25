@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Minus, Plus } from "lucide-react";
 
 interface QuantitySelectorProps {
   quantity: number;
@@ -37,7 +38,7 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
           onClick={handleDecrement}
           disabled={quantity <= 1}
         >
-          <span className="material-symbols-outlined text-sm">remove</span>
+          <Minus className="size-4" />
         </Button>
         <span className="w-12 text-center font-semibold text-sm text-on-surface">
           {quantity}
@@ -49,7 +50,7 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
           onClick={handleIncrement}
           disabled={quantity >= max}
         >
-          <span className="material-symbols-outlined text-sm">add</span>
+          <Plus className="size-4" />
         </Button>
       </div>
     </div>

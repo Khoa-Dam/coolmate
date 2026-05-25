@@ -1,11 +1,84 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { ProductCard } from "./components/ProductCard";
-import { ProductCarousel } from "./components/ProductCarousel";
-import { productApi } from "@/services/productApi";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Truck, RefreshCw, ShieldCheck, Ruler } from "lucide-react";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { ProductCarousel } from "@/components/product/product-carousel";
+import { productApi } from "@/services/product.service";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  PackageCheck,
+  RefreshCw,
+  Ruler,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1800&auto=format&fit=crop&q=82";
+
+const campaignCards = [
+  {
+    title: "Đồ nam",
+    subtitle: "Tối giản, dễ mặc, sẵn sàng cho mọi lịch trình.",
+    href: "/products?gender=nam",
+    image:
+      "https://images.unsplash.com/photo-1516826957135-700dedea698c?w=900&auto=format&fit=crop&q=72",
+  },
+  {
+    title: "Đồ nữ",
+    subtitle: "Activewear gọn nhẹ cho tập luyện và di chuyển.",
+    href: "/products?gender=nu",
+    image:
+      "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&auto=format&fit=crop&q=72",
+  },
+  {
+    title: "Pickleball",
+    subtitle: "Set đồ thoáng khí, linh hoạt trên sân.",
+    href: "/products?filter=pickleball",
+    image:
+      "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=900&auto=format&fit=crop&q=72",
+  },
+  {
+    title: "Đồ chạy bộ",
+    subtitle: "Nhẹ, khô nhanh và bền bỉ cho từng pace.",
+    href: "/products?category=do-chay-bo",
+    image:
+      "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=900&auto=format&fit=crop&q=72",
+  },
+];
+
+const quickCategories = [
+  { label: "Áo polo", href: "/products?category=ao-polo" },
+  { label: "Áo thun", href: "/products?category=ao-thun" },
+  { label: "Quần shorts", href: "/products?category=quan-short" },
+  { label: "Đồ mặc nhà", href: "/products?category=do-mac-nha" },
+  { label: "Phụ kiện", href: "/products?category=phu-kien" },
+  { label: "Sale", href: "/products?filter=sale" },
+];
+
+const serviceItems = [
+  {
+    icon: Truck,
+    title: "Miễn phí vận chuyển",
+    text: "Cho đơn hàng từ 200.000đ",
+  },
+  {
+    icon: RefreshCw,
+    title: "Đổi trả 60 ngày",
+    text: "Đổi trả dễ dàng, an tâm mua sắm",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Chất lượng cam kết",
+    text: "Chọn chất liệu bền, thoáng, dễ chăm sóc",
+  },
+  {
+    icon: Ruler,
+    title: "Chọn size chuẩn",
+    text: "Tư vấn size theo dáng người Việt",
+  },
+];
 
 export default async function Home() {
   const fetchProducts = (
@@ -18,256 +91,125 @@ export default async function Home() {
 
   const [bestSellers, tshirts, polos, shorts, homewear, accessories] =
     await Promise.all([
-      fetchProducts({ limit: 12 }),
-      fetchProducts({ category: "ao-thun", limit: 12 }),
-      fetchProducts({ category: "ao-polo", limit: 12 }),
-      fetchProducts({ category: "quan-short", limit: 12 }),
-      fetchProducts({ category: "do-mac-nha", limit: 12 }),
-      fetchProducts({ category: "phu-kien", limit: 12 }),
+      fetchProducts({ limit: 12, view: "card" }),
+      fetchProducts({ category: "ao-thun", limit: 12, view: "card" }),
+      fetchProducts({ category: "ao-polo", limit: 12, view: "card" }),
+      fetchProducts({ category: "quan-short", limit: 12, view: "card" }),
+      fetchProducts({ category: "do-mac-nha", limit: 12, view: "card" }),
+      fetchProducts({ category: "phu-kien", limit: 12, view: "card" }),
     ]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
 
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative w-full h-[600px] md:h-[750px] flex items-center justify-center overflow-hidden bg-zinc-900">
-          <div className="absolute inset-0 z-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt="NovaWear Hero"
-              className="w-full h-full object-cover object-center opacity-70"
-              src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1600&auto=format&fit=crop&q=80"
-            />
-            {/* Gradient overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-          </div>
+        <section className="relative min-h-[620px] overflow-hidden bg-black md:min-h-[720px]">
+          <Image
+            alt="NovaWear collection campaign"
+            src={HERO_IMAGE}
+            fill
+            preload
+            sizes="100vw"
+            className="object-cover object-center opacity-80"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/38 to-black/10" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
 
-          <div className="relative z-10 text-center px-gutter-mobile md:px-gutter-desktop max-w-4xl mx-auto flex flex-col items-center gap-6 mt-12 md:mt-20">
-            <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-              Mặc thoải mái.
-              <br />
-              Sống năng động.
-            </h1>
-            <p className="font-sans text-sm sm:text-base md:text-lg text-zinc-200 max-w-2xl mx-auto leading-relaxed drop-shadow-sm font-medium">
-              Thời trang cơ bản và thể thao cho mỗi ngày. Thiết kế tinh giản,
-              chất liệu cao cấp mang đến trải nghiệm dễ chịu tuyệt đối.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full sm:w-auto">
-              <Link href="/products" className="w-full sm:w-auto">
-                <Button className="bg-primary-container text-white hover:bg-accent font-headline text-xs font-bold uppercase tracking-wider h-14 px-10 rounded-lg shadow-lg w-full flex items-center justify-center gap-2 cursor-pointer">
-                  Mua sắm ngay <ArrowRight className="size-4 animate-bounce" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Benefits Strip */}
-        <section className="border-y border-outline-variant/30 bg-white py-10">
-          <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 divide-y-0 divide-x-0 md:divide-x divide-outline-variant/40">
-            <div className="flex flex-col items-center text-center px-4">
-              <Truck className="size-8 text-primary mb-3" />
-              <h4 className="font-headline text-xs font-bold uppercase tracking-wide text-on-surface">
-                Miễn phí vận chuyển
-              </h4>
-              <p className="font-sans text-[11px] text-on-surface-variant mt-1">
-                Cho đơn hàng từ 200.000đ
+          <div className="relative z-10 mx-auto flex min-h-[620px] max-w-container-max flex-col justify-end px-gutter-mobile pb-12 pt-24 md:min-h-[720px] md:px-gutter-desktop md:pb-16">
+            <div className="max-w-2xl text-white">
+              <p className="mb-4 inline-flex rounded-full bg-white/12 px-4 py-2 text-xs font-bold uppercase tracking-wide backdrop-blur">
+                NovaWear Summer Drop
               </p>
-            </div>
-            <div className="flex flex-col items-center text-center px-4">
-              <RefreshCw className="size-8 text-primary mb-3" />
-              <h4 className="font-headline text-xs font-bold uppercase tracking-wide text-on-surface">
-                Đổi trả 60 ngày
-              </h4>
-              <p className="font-sans text-[11px] text-on-surface-variant mt-1">
-                Đổi trả dễ dàng, an tâm mua sắm
+              <h1 className="font-headline text-4xl font-black leading-tight tracking-normal sm:text-5xl md:text-7xl">
+                Mặc mát.
+                <br />
+                Chuyển động cả ngày.
+              </h1>
+              <p className="mt-5 max-w-xl text-sm font-semibold leading-7 text-white/82 sm:text-base">
+                Những set đồ cơ bản, thể thao và mặc nhà được tinh chỉnh cho
+                khí hậu Việt Nam: nhẹ, thoáng, dễ phối và bền qua nhiều lần mặc.
               </p>
-            </div>
-            <div className="flex flex-col items-center text-center px-4">
-              <ShieldCheck className="size-8 text-primary mb-3" />
-              <h4 className="font-headline text-xs font-bold uppercase tracking-wide text-on-surface">
-                Chất lượng cam kết
-              </h4>
-              <p className="font-sans text-[11px] text-on-surface-variant mt-1">
-                100% tự hào sản xuất tại Việt Nam
-              </p>
-            </div>
-            <div className="flex flex-col items-center text-center px-4">
-              <Ruler className="size-8 text-primary mb-3" />
-              <h4 className="font-headline text-xs font-bold uppercase tracking-wide text-on-surface">
-                Chọn size chuẩn xác
-              </h4>
-              <p className="font-sans text-[11px] text-on-surface-variant mt-1">
-                Tư vấn size phù hợp hoàn hảo
-              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/products"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-7 font-headline text-xs font-black uppercase tracking-wide text-white transition hover:bg-primary-container"
+                >
+                  Mua ngay <ArrowRight className="size-4" />
+                </Link>
+                <Link
+                  href="/products?filter=new"
+                  className="inline-flex h-12 items-center justify-center rounded-lg border border-white/60 px-7 font-headline text-xs font-black uppercase tracking-wide text-white transition hover:bg-white hover:text-black"
+                >
+                  Xem hàng mới
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Categories Section */}
-        <section className="py-16 md:py-20 px-gutter-mobile md:px-gutter-desktop max-w-container-max mx-auto">
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-8 text-center uppercase tracking-tight">
-            Danh mục nổi bật
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {/* Áo thun */}
-            <Link
-              href="/products?category=ao-thun"
-              className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-2 md:col-span-2 lg:col-span-2 row-span-2 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Áo thun"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-6 left-6 text-on-primary">
-                <h3 className="font-headline-sm text-headline-sm">Áo thun</h3>
-                <p className="font-label-sm text-label-sm mt-1 opacity-80 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                  Khám phá{" "}
-                  <span className="material-symbols-outlined text-xs">
-                    arrow_outward
-                  </span>
-                </p>
-              </div>
-            </Link>
+        <ServiceStrip />
 
-            {/* Polo */}
-            <Link
-              href="/products?category=ao-polo"
-              className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              <div className="absolute inset-0 flex items-center justify-center bg-secondary-container group-hover:bg-surface-container-high transition-colors">
-                <span className="material-symbols-outlined text-4xl text-on-surface-variant">
-                  apparel
-                </span>
-              </div>
-              <div className="absolute bottom-4 left-4 text-on-surface">
-                <h3 className="font-label-md text-label-md">Polo</h3>
-              </div>
-            </Link>
-
-            {/* Quần shorts */}
-            <Link
-              href="/products?category=quan-short"
-              className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Quần shorts"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                src="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&auto=format&fit=crop&q=60"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-              <div className="absolute bottom-4 left-4 text-on-primary">
-                <h3 className="font-label-md text-label-md">Quần shorts</h3>
-              </div>
-            </Link>
-
-            {/* Đồ chạy bộ */}
-            <Link
-              href="/products"
-              className="group block relative rounded-xl overflow-hidden aspect-[2/1] md:aspect-square bg-surface-container-low col-span-2 md:col-span-2 lg:col-span-2 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Đồ chạy bộ"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop&q=60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-              <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 text-on-primary">
-                <h3 className="font-headline-sm text-headline-sm">
-                  Đồ chạy bộ
-                </h3>
-                <p className="font-label-sm text-label-sm mt-1">
-                  Sẵn sàng bứt tốc
-                </p>
-              </div>
-            </Link>
-
-            {/* Đồ lót */}
-            <Link
-              href="/products?category=do-mac-nha"
-              className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              <div className="absolute inset-0 flex items-center justify-center bg-surface-container-high group-hover:bg-surface-container-highest transition-colors">
-                <span className="material-symbols-outlined text-4xl text-on-surface-variant">
-                  checkroom
-                </span>
-              </div>
-              <div className="absolute bottom-4 left-4 text-on-surface">
-                <h3 className="font-label-md text-label-md">Đồ lót</h3>
-              </div>
-            </Link>
-
-            {/* Pickleball */}
-            <Link
-              href="/products"
-              className="group block relative rounded-xl overflow-hidden aspect-square bg-surface-container-low col-span-1 md:col-span-1 shadow-sm hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300 cursor-pointer"
-            >
-              <div className="absolute inset-0 flex items-center justify-center bg-tertiary-container text-on-tertiary-container group-hover:bg-tertiary transition-colors">
-                <span className="material-symbols-outlined text-4xl">
-                  sports_tennis
-                </span>
-              </div>
-              <div className="absolute bottom-4 left-4 text-on-tertiary-container">
-                <h3 className="font-label-md text-label-md">Pickleball</h3>
-              </div>
-            </Link>
-          </div>
-        </section>
-
-        {/* Product Rails */}
-        <section className="border-t border-outline-variant/20 bg-zinc-50 px-gutter-mobile py-10 md:px-gutter-desktop md:py-14">
-          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 gap-4">
-            <div className="text-center sm:text-left">
-              <h2 className="font-headline text-xl md:text-2xl font-black text-on-surface uppercase tracking-tight">
-                Sản phẩm bán chạy
+        <section className="mx-auto max-w-container-max px-gutter-mobile py-12 md:px-gutter-desktop md:py-16">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-primary">
+                Featured promotions
+              </p>
+              <h2 className="mt-1 font-headline text-2xl font-black uppercase tracking-normal text-on-surface md:text-3xl">
+                Bộ sưu tập nổi bật
               </h2>
-              <p className="text-sm text-on-surface-variant mt-1 font-medium">
-                Những items được yêu thích nhất từ khách hàng của chúng tôi.
-              </p>
             </div>
             <Link
-              href="/products?filter=best-seller"
-              className="hidden sm:block"
+              href="/products"
+              className="inline-flex items-center gap-1 text-sm font-bold text-on-surface transition hover:text-primary"
             >
-              <Button
-                variant="outline"
-                className="border-outline-variant text-on-surface hover:bg-surface-container rounded-lg font-headline text-xs font-bold uppercase tracking-wider h-11 px-6 cursor-pointer"
-              >
-                Xem tất cả
-              </Button>
+              Xem tất cả <ArrowUpRight className="size-4" />
             </Link>
           </div>
 
-          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 md:gap-6">
-            {bestSellers.map((product) => (
-              <div
-                key={product.id}
-                className="min-w-[74%] snap-start sm:min-w-[42%] lg:min-w-[29%] xl:min-w-[23%]"
-              >
-                <ProductCard product={product} />
-              </div>
+          <div className="grid gap-4 md:grid-cols-4 md:auto-rows-[260px]">
+            <CampaignCard
+              {...campaignCards[0]}
+              className="md:col-span-2 md:row-span-2"
+              priority
+            />
+            {campaignCards.slice(1).map((card) => (
+              <CampaignCard key={card.title} {...card} />
             ))}
           </div>
+        </section>
 
-          <div className="text-center mt-10 sm:hidden">
-            <Link href="/products?filter=best-seller">
-              <Button
-                variant="outline"
-                className="border-outline-variant text-on-surface w-full h-11 rounded-lg font-headline text-xs font-bold uppercase tracking-wider"
-              >
-                Xem tất cả
-              </Button>
-            </Link>
+        <section className="border-y border-outline-variant/25 bg-white py-8">
+          <div className="mx-auto flex max-w-container-max flex-col gap-5 px-gutter-mobile md:px-gutter-desktop">
+            <div className="flex items-center gap-3">
+              <PackageCheck className="size-5 text-primary" />
+              <h2 className="font-headline text-base font-black uppercase tracking-normal text-on-surface">
+                Mua nhanh theo nhu cầu
+              </h2>
+            </div>
+            <div className="no-scrollbar flex gap-3 overflow-x-auto pb-1">
+              {quickCategories.map((category) => (
+                <Link
+                  key={category.href}
+                  href={category.href}
+                  className="shrink-0 rounded-full border border-outline-variant/60 bg-surface px-5 py-3 text-sm font-bold text-on-surface transition hover:border-primary hover:bg-primary hover:text-white"
+                >
+                  {category.label}
+                </Link>
+              ))}
+            </div>
           </div>
+        </section>
 
-          <div className="mx-auto mt-8 max-w-container-max">
+        <section className="bg-zinc-50 px-gutter-mobile py-8 md:px-gutter-desktop md:py-12">
+          <div className="mx-auto max-w-container-max">
+            <ProductCarousel
+              title="Sản phẩm bán chạy"
+              description="Các item được chọn nhiều nhất trong tuần."
+              products={bestSellers}
+              href="/products?filter=best-seller"
+            />
             <ProductCarousel
               title="Áo thun"
               description="Form dễ mặc, chất liệu thoáng cho mỗi ngày."
@@ -304,5 +246,72 @@ export default async function Home() {
 
       <Footer />
     </div>
+  );
+}
+
+function ServiceStrip() {
+  return (
+    <section className="border-y border-outline-variant/30 bg-white">
+      <div className="mx-auto grid max-w-container-max grid-cols-2 gap-y-7 px-gutter-mobile py-9 md:grid-cols-4 md:divide-x md:divide-outline-variant/35 md:px-gutter-desktop">
+        {serviceItems.map((item) => (
+          <div key={item.title} className="flex flex-col items-center px-4 text-center">
+            <item.icon className="mb-3 size-7 text-primary" />
+            <h3 className="font-headline text-xs font-black uppercase tracking-normal text-on-surface">
+              {item.title}
+            </h3>
+            <p className="mt-1 max-w-44 text-[11px] font-medium leading-5 text-on-surface-variant">
+              {item.text}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CampaignCard({
+  title,
+  subtitle,
+  href,
+  image,
+  className = "",
+  priority = false,
+}: {
+  title: string;
+  subtitle: string;
+  href: string;
+  image: string;
+  className?: string;
+  priority?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`group relative block min-h-[260px] overflow-hidden rounded-lg bg-surface-container-low ${className}`}
+    >
+      <Image
+        alt={title}
+        src={image}
+        fill
+        sizes={
+          priority
+            ? "(max-width: 768px) 100vw, 50vw"
+            : "(max-width: 768px) 100vw, 25vw"
+        }
+        className="object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/20 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-5 text-white md:p-7">
+        <h3 className="font-headline text-2xl font-black uppercase tracking-normal md:text-3xl">
+          {title}
+        </h3>
+        <p className="mt-2 max-w-sm text-sm font-semibold leading-6 text-white/82">
+          {subtitle}
+        </p>
+        <span className="mt-5 inline-flex items-center gap-1 rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-black transition group-hover:bg-primary group-hover:text-white">
+          Mua ngay <ArrowRight className="size-3.5" />
+        </span>
+      </div>
+    </Link>
   );
 }

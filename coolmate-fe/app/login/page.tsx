@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { AuthModal } from "../components/AuthModal";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { AuthModal } from "@/components/layout/auth-modal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -38,7 +38,8 @@ export default function LoginPage() {
                   Mua nhanh hơn, ưu đãi rõ hơn
                 </h1>
                 <p className="mt-4 max-w-md text-sm font-medium text-white/80 md:text-base">
-                  Đăng nhập để đồng bộ giỏ hàng, theo dõi đơn hàng và nhận ưu đãi thành viên.
+                  Đăng nhập để đồng bộ giỏ hàng, theo dõi đơn hàng và nhận ưu
+                  đãi thành viên.
                 </p>
               </div>
             </div>

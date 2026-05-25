@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState } from "react";
 import { Product } from "@/types/product";
@@ -67,7 +67,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[đĐ]/g, "d")
+      .replace(/[\u0110\u0111]/g, "d")
       .replace(/[^a-z0-9\s-]/g, "")
       .trim()
       .replace(/\s+/g, "-");
@@ -142,7 +142,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <h2 className="font-headline text-lg font-bold text-on-surface">
-            {initialData ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
+            {initialData ? "Chệnh sửa sản phẩm" : "Thêm sản phẩm mới"}
           </h2>
 
           {/* Name */}
@@ -259,7 +259,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
                 htmlFor="stock"
                 className="text-xs font-semibold text-on-surface-variant"
               >
-                Tồn kho
+                Tá»n kho
               </Label>
               <Input
                 id="stock"
@@ -292,7 +292,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
           {/* Sizes checkboxes */}
           <div className="flex flex-col gap-2">
             <Label className="text-xs font-semibold text-on-surface-variant">
-              Kích thước hỗ trợ
+              Kích thước hữ trợ
             </Label>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {AVAILABLE_SIZES.map((size) => (
@@ -316,7 +316,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
           {/* Colors checkboxes */}
           <div className="flex flex-col gap-2">
             <Label className="text-xs font-semibold text-on-surface-variant">
-              Màu sắc hỗ trợ
+              Màu sắc hữ trợ
             </Label>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {AVAILABLE_COLORS.map((color) => (
@@ -347,7 +347,7 @@ export const AdminProductForm: React.FC<AdminProductFormProps> = ({
             </Label>
             <Textarea
               id="description"
-              placeholder="Mô tả chất liệu, thiết kế, hướng dẫn giặt ủi..."
+              placeholder="Mô tả chất liệu, thiết kế, hướng dẫn giặt ẻ..."
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}

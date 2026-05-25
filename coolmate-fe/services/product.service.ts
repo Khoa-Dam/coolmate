@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/apiClient";
+import { apiClient } from "@/services/api-client.service";
 import { PaginatedResponse } from "@/types/api";
 import { Product } from "@/types/product";
 
@@ -9,6 +9,7 @@ export type ProductQuery = {
   search?: string;
   minPrice?: number;
   maxPrice?: number;
+  view?: "card" | "full";
 };
 
 export type CreateProductPayload = {
@@ -68,15 +69,24 @@ const toProductPayload = (payload: CreateProductPayload | UpdateProductPayload) 
 
 export const productApi = {
   getProducts(params?: ProductQuery) {
-    return apiClient<PaginatedResponse<Product>>(`/products${toSearchParams(params)}`, { auth: false });
+    return apiClient<PaginatedResponse<Product>>(`/products${toSearchParams(params)}`, {
+      auth: false,
+      next: { revalidate: 60, tags: ["products"] },
+    });
   },
 
   getProductBySlug(slug: string) {
-    return apiClient<Product>(`/products/slug/${encodeURIComponent(slug)}`, { auth: false });
+    return apiClient<Product>(`/products/slug/${encodeURIComponent(slug)}`, {
+      auth: false,
+      next: { revalidate: 60, tags: ["products", `product:${slug}`] },
+    });
   },
 
   getProductById(id: string) {
-    return apiClient<Product>(`/products/${encodeURIComponent(id)}`, { auth: false });
+    return apiClient<Product>(`/products/${encodeURIComponent(id)}`, {
+      auth: false,
+      next: { revalidate: 60, tags: ["products", `product:${id}`] },
+    });
   },
 
   createProduct(payload: CreateProductPayload) {

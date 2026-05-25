@@ -2,11 +2,11 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Header } from "../../../components/Header";
-import { Footer } from "../../../components/Footer";
-import { AdminRoute } from "../../../components/AdminRoute";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { AdminRoute } from "@/components/layout/admin-route";
 import { AdminProductForm } from "../components/AdminProductForm";
-import { productApi } from "@/services/productApi";
+import { productApi } from "@/services/product.service";
 import { Product } from "@/types/product";
 
 export default function AdminProductCreatePage() {
@@ -27,7 +27,7 @@ export default function AdminProductCreatePage() {
 
       <main className="flex-grow max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-8 md:py-12 w-full">
         <AdminRoute>
-        <AdminProductForm onSubmit={handleSubmit} onCancel={handleCancel} />
+          <AdminProductForm onSubmit={handleSubmit} onCancel={handleCancel} />
         </AdminRoute>
       </main>
 

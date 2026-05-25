@@ -3,7 +3,7 @@ import { Montserrat, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
-import { AppToaster } from "@/app/components/AppToaster";
+import { AppToaster } from "@/components/layout/app-toaster";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -33,12 +33,6 @@ export default function RootLayout({
       lang="vi"
       className={`${montserrat.variable} ${inter.variable} h-full antialiased`}
     >
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0..1,-25..200"
-          rel="stylesheet"
-        />
-      </head>
       <body className="min-h-lvh flex flex-col bg-surface text-on-surface font-sans">
         <AuthProvider>
           <CartProvider>{children}</CartProvider>

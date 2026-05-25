@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/apiClient";
+import { apiClient } from "@/services/api-client.service";
 import { Cart, CartItem } from "@/types/cart";
 
 type BackendCartItem = {

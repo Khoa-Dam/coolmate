@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
+import { CreditCard, Mail, WalletCards } from "lucide-react";
 
 export const Footer = () => {
   const [email, setEmail] = useState("");
@@ -36,11 +37,12 @@ export const Footer = () => {
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
               aria-label="Facebook"
             >
-              <img
+              <Image
                 src="https://cdn.simpleicons.org/facebook/0866FF"
                 alt="Facebook"
-                width="20"
-                height="20"
+                width={20}
+                height={20}
+                unoptimized
                 className="size-5"
               />
             </a>
@@ -49,11 +51,12 @@ export const Footer = () => {
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
               aria-label="Instagram"
             >
-              <img
+              <Image
                 src="https://cdn.simpleicons.org/instagram/FF0069"
                 alt="Instagram"
-                width="20"
-                height="20"
+                width={20}
+                height={20}
+                unoptimized
                 className="size-5"
               />
             </a>
@@ -62,11 +65,12 @@ export const Footer = () => {
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
               aria-label="Youtube"
             >
-              <img
+              <Image
                 src="https://cdn.simpleicons.org/youtube/FF0000"
                 alt="YouTube"
-                width="20"
-                height="20"
+                width={20}
+                height={20}
+                unoptimized
                 className="size-5"
               />
             </a>
@@ -146,10 +150,8 @@ export const Footer = () => {
       <div className="mt-16 pt-8 border-t border-white/10 max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/60 font-medium">
         <p>© 2026 NovaWear. All rights reserved. Designed in Vietnam.</p>
         <div className="flex gap-4">
-          <span className="material-symbols-outlined text-3xl">payments</span>
-          <span className="material-symbols-outlined text-3xl">
-            credit_card
-          </span>
+          <WalletCards className="size-7" />
+          <CreditCard className="size-7" />
         </div>
       </div>
     </footer>

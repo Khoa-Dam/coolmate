@@ -3,6 +3,10 @@ import { getAccessToken, removeAccessToken } from "@/utils/authStorage";
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
   auth?: boolean;
+  next?: {
+    revalidate?: number | false;
+    tags?: string[];
+  };
 };
 
 type ApiEnvelope<T> = {

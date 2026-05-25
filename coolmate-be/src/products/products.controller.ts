@@ -1,4 +1,15 @@
-﻿import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Roles } from '../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -12,16 +23,19 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
+  @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   findAll(@Query() query: ProductQueryDto) {
     return this.productsService.findAll(query);
   }
 
   @Get('slug/:slug')
+  @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   findBySlug(@Param('slug') slug: string) {
     return this.productsService.findBySlug(slug);
   }
 
   @Get(':id')
+  @Header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   findById(@Param('id') id: string) {
     return this.productsService.findById(id);
   }

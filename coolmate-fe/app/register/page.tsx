@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { AuthModal } from "../components/AuthModal";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { AuthModal } from "@/components/layout/auth-modal";
 
 export default function RegisterPage() {
   const router = useRouter();

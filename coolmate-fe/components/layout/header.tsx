@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { OptimizedImage } from "@/components/product/optimized-image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,8 +14,8 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { CartDrawer } from "./CartDrawer";
-import { AuthModal, AuthMode } from "./AuthModal";
+import { CartDrawer } from "./cart-drawer";
+import { AuthModal, AuthMode } from "./auth-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +37,192 @@ import {
   LogIn,
   UserPlus,
   ArrowRight,
+  ChevronDown,
 } from "lucide-react";
+
+type NavColumn = {
+  title: string;
+  items: Array<{ label: string; href: string; badge?: string }>;
+};
+
+type NavLink = {
+  label: string;
+  href: string;
+  isSale?: boolean;
+  menu?: {
+    columns: NavColumn[];
+    feature: {
+      title: string;
+      text: string;
+      href: string;
+      cta: string;
+    };
+  };
+};
+
+const navLinks: NavLink[] = [
+  {
+    label: "Nam",
+    href: "/products?gender=nam",
+    menu: {
+      columns: [
+        {
+          title: "Theo danh mục",
+          items: [
+            { label: "Áo thun nam", href: "/products?gender=nam&category=ao-thun" },
+            { label: "Áo polo nam", href: "/products?gender=nam&category=ao-polo" },
+            { label: "Quần short nam", href: "/products?gender=nam&category=quan-short" },
+            { label: "Đồ mặc nhà", href: "/products?gender=nam&category=do-mac-nha" },
+          ],
+        },
+        {
+          title: "Nhu cầu",
+          items: [
+            { label: "Đi làm", href: "/products?gender=nam&filter=work" },
+            { label: "Tập luyện", href: "/products?gender=nam&filter=sport" },
+            { label: "Mặc hàng ngày", href: "/products?gender=nam&filter=daily" },
+            { label: "Best seller", href: "/products?gender=nam&filter=best-seller", badge: "Hot" },
+          ],
+        },
+      ],
+      feature: {
+        title: "Men's essentials",
+        text: "Các item dễ phối cho tuần mới: áo thun, polo và quần short.",
+        href: "/products?gender=nam",
+        cta: "Mua đồ nam",
+      },
+    },
+  },
+  {
+    label: "Nữ",
+    href: "/products?gender=nu",
+    menu: {
+      columns: [
+        {
+          title: "Theo danh mục",
+          items: [
+            { label: "Áo thun nữ", href: "/products?gender=nu&category=ao-thun" },
+            { label: "Áo polo nữ", href: "/products?gender=nu&category=ao-polo" },
+            { label: "Quần short nữ", href: "/products?gender=nu&category=quan-short" },
+            { label: "Đồ mặc nhà", href: "/products?gender=nu&category=do-mac-nha" },
+          ],
+        },
+        {
+          title: "Nhu cầu",
+          items: [
+            { label: "Activewear", href: "/products?gender=nu&filter=active" },
+            { label: "Đi chơi", href: "/products?gender=nu&filter=casual" },
+            { label: "Mặc nhà", href: "/products?gender=nu&filter=homewear" },
+            { label: "Hàng mới", href: "/products?gender=nu&filter=new", badge: "New" },
+          ],
+        },
+      ],
+      feature: {
+        title: "Women's active comfort",
+        text: "Form gọn, chất liệu nhẹ và co giãn cho lịch trình năng động.",
+        href: "/products?gender=nu",
+        cta: "Mua đồ nữ",
+      },
+    },
+  },
+  {
+    label: "Sản phẩm mới",
+    href: "/products?filter=new",
+    menu: {
+      columns: [
+        {
+          title: "Vừa lên kệ",
+          items: [
+            { label: "Áo thun mới", href: "/products?filter=new&category=ao-thun" },
+            { label: "Polo mới", href: "/products?filter=new&category=ao-polo" },
+            { label: "Quần mới", href: "/products?filter=new&category=quan-short" },
+            { label: "Phụ kiện mới", href: "/products?filter=new&category=phu-kien" },
+          ],
+        },
+        {
+          title: "Gợi ý nhanh",
+          items: [
+            { label: "Under 300K", href: "/products?filter=new&price=under-300" },
+            { label: "Best seller mới", href: "/products?filter=best-seller" },
+            { label: "Set đi làm", href: "/products?filter=work" },
+            { label: "Set cuối tuần", href: "/products?filter=weekend" },
+          ],
+        },
+      ],
+      feature: {
+        title: "New arrivals",
+        text: "Cập nhật các item mới nhất cho mùa nóng và vận động ngoài trời.",
+        href: "/products?filter=new",
+        cta: "Xem hàng mới",
+      },
+    },
+  },
+  {
+    label: "Bộ sưu tập",
+    href: "/products?filter=collection",
+    menu: {
+      columns: [
+        {
+          title: "Campaign",
+          items: [
+            { label: "Summer Drop", href: "/products?filter=summer" },
+            { label: "Office Essentials", href: "/products?filter=office" },
+            { label: "Running Club", href: "/products?filter=running" },
+            { label: "Home Comfort", href: "/products?filter=homewear" },
+          ],
+        },
+        {
+          title: "Theo hoạt động",
+          items: [
+            { label: "Pickleball", href: "/products?filter=pickleball", badge: "Trend" },
+            { label: "Gym", href: "/products?filter=gym" },
+            { label: "Travel", href: "/products?filter=travel" },
+            { label: "Daily basics", href: "/products?filter=daily" },
+          ],
+        },
+      ],
+      feature: {
+        title: "Shop by story",
+        text: "Khám phá các capsule collection được gom theo ngữ cảnh mặc.",
+        href: "/products?filter=collection",
+        cta: "Xem bộ sưu tập",
+      },
+    },
+  },
+  {
+    label: "Sale",
+    href: "/products?filter=sale",
+    isSale: true,
+    menu: {
+      columns: [
+        {
+          title: "Deal nổi bật",
+          items: [
+            { label: "Sale áo thun", href: "/products?filter=sale&category=ao-thun" },
+            { label: "Sale polo", href: "/products?filter=sale&category=ao-polo" },
+            { label: "Sale quần short", href: "/products?filter=sale&category=quan-short" },
+            { label: "Combo tiết kiệm", href: "/products?filter=combo", badge: "-20%" },
+          ],
+        },
+        {
+          title: "Mức giá",
+          items: [
+            { label: "Dưới 199K", href: "/products?filter=sale&price=under-199" },
+            { label: "Dưới 299K", href: "/products?filter=sale&price=under-299" },
+            { label: "Mua 2 ưu đãi", href: "/products?filter=buy-2" },
+            { label: "Xả kho cuối mùa", href: "/products?filter=clearance" },
+          ],
+        },
+      ],
+      feature: {
+        title: "Sale đang chạy",
+        text: "Các deal ngắn hạn cho item cơ bản, thể thao và mặc nhà.",
+        href: "/products?filter=sale",
+        cta: "Săn sale",
+      },
+    },
+  },
+];
 
 export const Header = () => {
   const pathname = usePathname();
@@ -49,6 +235,10 @@ export const Header = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [authModalKey, setAuthModalKey] = useState(0);
+  const [activeMenuHref, setActiveMenuHref] = useState<string | null>(null);
+  const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,13 +248,6 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: "Nam", href: "/products?gender=nam" },
-    { label: "Nữ", href: "/products?gender=nu" },
-    { label: "Sản phẩm mới", href: "/products?filter=new" },
-    { label: "Bộ sưu tập", href: "/products?filter=collection" },
-    { label: "Sale", href: "/products?filter=sale", isSale: true },
-  ];
   const currentQuery = searchParams.toString();
   const currentHref = `${pathname}${currentQuery ? `?${currentQuery}` : ""}`;
 
@@ -78,6 +261,32 @@ export const Header = () => {
     setAuthMode(mode);
     setAuthModalKey((current) => current + 1);
     setAuthModalOpen(true);
+  }, []);
+
+  const openMegaMenu = useCallback((href: string) => {
+    if (closeMenuTimeoutRef.current) {
+      clearTimeout(closeMenuTimeoutRef.current);
+      closeMenuTimeoutRef.current = null;
+    }
+    setActiveMenuHref(href);
+  }, []);
+
+  const scheduleCloseMegaMenu = useCallback(() => {
+    if (closeMenuTimeoutRef.current) {
+      clearTimeout(closeMenuTimeoutRef.current);
+    }
+    closeMenuTimeoutRef.current = setTimeout(() => {
+      setActiveMenuHref(null);
+      closeMenuTimeoutRef.current = null;
+    }, 160);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (closeMenuTimeoutRef.current) {
+        clearTimeout(closeMenuTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -213,7 +422,7 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <ul className="hidden md:flex items-center gap-8 h-full">
+          <ul className="hidden h-full items-center gap-7 md:flex">
             <li>
               <Link
                 href="/products"
@@ -227,22 +436,86 @@ export const Header = () => {
               </Link>
             </li>
             {navLinks.map((link) => {
-              const isActive = currentHref === link.href;
+              const isRouteActive = currentHref === link.href;
+              const isMenuOpen = activeMenuHref === link.href;
               const isSale = "isSale" in link && link.isSale;
               return (
-                <li key={link.href}>
+                <li
+                  key={link.href}
+                  className="flex h-full items-center"
+                  onFocus={() => link.menu && openMegaMenu(link.href)}
+                  onMouseEnter={() => link.menu && openMegaMenu(link.href)}
+                  onMouseLeave={scheduleCloseMegaMenu}
+                >
                   <Link
                     href={link.href}
-                    className={`font-headline text-xs font-bold uppercase tracking-wider transition-colors py-5 block ${
-                      isActive
-                        ? "text-primary border-b-2 border-primary"
+                    className={`flex h-full items-center gap-1 border-b-2 border-transparent font-headline text-xs font-bold uppercase tracking-wide transition-colors ${
+                      isRouteActive || isMenuOpen
+                        ? "border-primary text-primary"
                         : isSale
                           ? "text-tertiary hover:text-tertiary-container font-black"
                           : "text-on-surface-variant hover:text-on-surface"
                     }`}
                   >
                     {link.label}
+                    {link.menu && <ChevronDown className="size-3.5" />}
                   </Link>
+                  {link.menu && (
+                    <div
+                      onMouseEnter={() => openMegaMenu(link.href)}
+                      onMouseLeave={scheduleCloseMegaMenu}
+                      className={`fixed left-0 right-0 z-[70] px-gutter-mobile transition duration-150 md:px-gutter-desktop ${
+                        isMenuOpen
+                          ? "pointer-events-auto block opacity-100"
+                          : "pointer-events-none hidden opacity-0"
+                      } ${
+                        isScrolled ? "top-16" : "top-[104px]"
+                      }`}
+                    >
+                      <div className="mx-auto max-w-container-max pt-3">
+                        <div className="pointer-events-auto grid grid-cols-[1fr_1fr_320px] gap-8 rounded-b-xl border border-outline-variant/35 bg-white p-8 shadow-[0_24px_70px_rgba(0,0,0,0.18)]">
+                          {link.menu.columns.map((column) => (
+                            <div key={column.title}>
+                              <h3 className="mb-4 font-headline text-xs font-black uppercase tracking-wide text-on-surface">
+                                {column.title}
+                              </h3>
+                              <div className="grid gap-2">
+                                {column.items.map((item) => (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className="flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-on-surface-variant transition hover:bg-surface-container-low hover:text-primary"
+                                  >
+                                    <span>{item.label}</span>
+                                    {item.badge && (
+                                      <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase text-white">
+                                        {item.badge}
+                                      </span>
+                                    )}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                          <Link
+                            href={link.menu.feature.href}
+                            className="group/card flex min-h-52 flex-col justify-end rounded-lg bg-black p-6 text-white transition hover:bg-primary"
+                          >
+                            <p className="font-headline text-2xl font-black uppercase leading-tight tracking-normal">
+                              {link.menu.feature.title}
+                            </p>
+                            <p className="mt-3 text-sm font-semibold leading-6 text-white/78">
+                              {link.menu.feature.text}
+                            </p>
+                            <span className="mt-5 inline-flex items-center gap-1 text-xs font-black uppercase tracking-wide">
+                              {link.menu.feature.cta}
+                              <ArrowRight className="size-3.5 transition group-hover/card:translate-x-0.5" />
+                            </span>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -419,9 +692,14 @@ export const Header = () => {
                       <div className="flex flex-col gap-4">
                         {cart.items.slice(0, 2).map((item) => (
                           <div key={item.id} className="flex gap-4">
-                            <div className="h-28 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={item.product.imageUrl} alt={item.product.name} className="h-full w-full object-cover" />
+                            <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+                              <OptimizedImage
+                                src={item.product.imageUrl}
+                                alt={item.product.name}
+                                fill
+                                sizes="96px"
+                                className="object-cover"
+                              />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="line-clamp-2 font-headline text-sm font-bold text-black">

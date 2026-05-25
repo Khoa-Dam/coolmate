@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Product } from "../../types/product";
+import { Heart } from "lucide-react";
+import { Product } from "@/types/product";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/product/optimized-image";
 
 interface ProductCardProps {
   product: Product;
@@ -70,13 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         aria-pressed={isFavorite}
         className="absolute top-2 right-2 z-10 flex p-1.5 bg-surface/80 backdrop-blur rounded-full text-on-surface opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 hover:text-primary cursor-pointer shadow-sm"
       >
-        <span
-          className={`material-symbols-outlined text-[16px] ${
-            isFavorite ? "fill-icon text-red-500" : ""
-          }`}
-        >
-          favorite
-        </span>
+        <Heart className={`size-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
       </button>
 
       {/* Product Image Link */}
@@ -84,11 +80,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         href={`/products/${product.slug}`}
         className="block overflow-hidden bg-surface-container-high w-full relative aspect-[3/4]"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <OptimizedImage
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {/* Quick Add button on hover */}
         <div className="absolute bottom-0 left-0 w-full p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100 flex gap-2 z-10">

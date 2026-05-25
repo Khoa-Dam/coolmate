@@ -1,5 +1,5 @@
 ﻿import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class ProductQueryDto {
   @IsOptional()
@@ -12,7 +12,12 @@ export class ProductQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(100)
   limit?: number = 12;
+
+  @IsOptional()
+  @IsIn(['card', 'full'])
+  view?: 'card' | 'full' = 'full';
 
   @IsOptional()
   @IsString()

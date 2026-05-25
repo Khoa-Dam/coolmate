@@ -1,4 +1,5 @@
 import React from "react";
+import { Ruler } from "lucide-react";
 
 interface SizeSelectorProps {
   sizes: string[];
@@ -11,12 +12,19 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
   selectedSize,
   onChange,
 }) => {
+  if (sizes.length === 0) return null;
+
   return (
     <div className="mb-8">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="font-label-md text-label-md text-on-surface">Kích thước</h3>
-        <button type="button" className="text-primary font-label-sm text-label-sm hover:underline focus:outline-none flex items-center gap-1 cursor-pointer">
-          <span className="material-symbols-outlined text-[16px]">straighten</span> Hướng dẫn chọn size
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-label-md font-label-md text-on-surface">
+          Kích thước
+        </h2>
+        <button
+          type="button"
+          className="flex cursor-pointer items-center gap-1 text-label-sm font-label-sm text-primary hover:underline focus:outline-none"
+        >
+          <Ruler className="size-4" /> Hướng dẫn chọn size
         </button>
       </div>
       <div className="grid grid-cols-4 gap-3">
@@ -26,12 +34,13 @@ export const SizeSelector: React.FC<SizeSelectorProps> = ({
             <button
               key={size}
               type="button"
-              className={`py-3 rounded-lg font-label-md text-label-md transition-colors cursor-pointer text-center ${
+              className={`cursor-pointer rounded-lg py-3 text-center text-label-md font-label-md transition-colors ${
                 isSelected
-                  ? "border-2 border-primary text-white bg-on-surface"
-                  : "border border-outline-variant text-on-surface bg-surface hover:border-on-surface"
+                  ? "border-2 border-primary bg-on-surface text-white"
+                  : "border border-outline-variant bg-surface text-on-surface hover:border-on-surface"
               }`}
               onClick={() => onChange(size)}
+              aria-pressed={isSelected}
             >
               {size}
             </button>
